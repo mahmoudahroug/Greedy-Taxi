@@ -1,6 +1,8 @@
 #include "TextureBuilder.h"
 #include "Model_3DS.h"
 #include "GLTexture.h"
+#include <iostream>
+#include <fstream>
 #include <glut.h>
 
 int WIDTH = 1280;
@@ -42,6 +44,9 @@ int cameraZoom = 0;
 // Model Variables
 Model_3DS model_house;
 Model_3DS model_tree;
+Model_3DS model_car;
+Model_3DS model_coin;
+Model_3DS model_money;
 
 // Textures
 GLTexture tex_ground;
@@ -127,7 +132,7 @@ void myInit(void)
 
 	InitLightSource();
 
-	InitMaterial();
+	//InitMaterial();
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -188,6 +193,27 @@ void myDisplay(void)
 	glTranslatef(10, 0, 0);
 	glScalef(0.7, 0.7, 0.7);
 	model_tree.Draw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-10, 0, -10);
+	//glScalef(100, 100, 100);
+	model_car.Draw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glColor3f(0, 1, 1);
+	glTranslatef(10, 0, 10);
+	glScalef(0.7, 0.7, 0.7);
+	glRotated(90, 1, 0, 0);
+	model_coin.Draw();
+	glPopMatrix();
+	glColor3f(1, 1, 1);
+
+	glPushMatrix();
+	glTranslatef(-10, 0, 10);
+	glScalef(0.7, 0.7, 0.7);
+	model_money.Draw();
 	glPopMatrix();
 
 	// Draw house Model
@@ -318,6 +344,10 @@ void LoadAssets()
 	// Loading Model files
 	model_house.Load("Models/house/house.3DS");
 	model_tree.Load("Models/tree/Tree1.3ds");
+	model_car.Load("Models/car/Mercedes.3ds");
+
+	model_coin.Load("Models/coin/coinOBJ.3ds");
+	model_money.Load("Models/money/money.3ds");
 
 	// Loading texture files
 	tex_ground.Load("Textures/ground.bmp");
