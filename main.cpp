@@ -1,6 +1,7 @@
 #include "TextureBuilder.h"
 #include "Model_3DS.h"
 #include "GLTexture.h"
+#include "Car.h"
 #include <iostream>
 #include <fstream>
 #include <glut.h>
@@ -10,6 +11,7 @@ int HEIGHT = 720;
 
 GLuint tex;
 char title[] = "3D Model Loader Sample";
+Car car;
 
 // 3D Projection Options
 GLdouble fovy = 45.0;
@@ -221,6 +223,8 @@ void myDisplay(void)
 	glRotatef(90.f, 1, 0, 0);
 	model_house.Draw();
 	glPopMatrix();
+
+	car.render();
 
 
 	//sky box

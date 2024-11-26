@@ -1,5 +1,6 @@
 #include "Car.h"
 #include <cmath>
+#include <glut.h>
 
 void Car::accelerate() {
 	acceleration = ACCELERATION;
@@ -38,4 +39,13 @@ void Car::update(float deltaTime) {
 	position = position + velocity * deltaTime;
 
 }
-
+void Car::render() {
+	//glPushMatrix();
+	//glTranslatef(position.x, position.y, position.z);
+	//glRotatef(angle, 0, 1, 0);
+	//glScalef(size.x, size.y, size.z);
+	//glutSolidCube(1);
+	////model.render();
+	//glPopMatrix();
+	renderBoundingBox();
+}

@@ -18,7 +18,8 @@ public:
 	void turnLeft();
 	void turnRight();
 	void stopTurning();
-private:
+
+	Car() : angularSpeed(0) {}
 private:
 	void rotateY(float rad) {
 		// Rotate the direction vector around the Y-axis
