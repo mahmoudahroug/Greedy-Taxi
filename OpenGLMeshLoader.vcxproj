@@ -87,6 +87,7 @@
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GLTexture.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model_3DS.cpp" />
     <ClCompile Include="OpenGLMeshLoader.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GLTexture.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Model_3DS.h" />
   </ItemGroup>

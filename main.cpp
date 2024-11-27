@@ -17,7 +17,7 @@ Car car;
 GLdouble fovy = 45.0;
 GLdouble aspectRatio = (GLdouble)WIDTH / (GLdouble)HEIGHT;
 GLdouble zNear = 0.1;
-GLdouble zFar = 100;
+GLdouble zFar = 1000;
 
 class Vector
 {
@@ -189,6 +189,7 @@ void myDisplay(void)
 
 	// Draw Ground
 	RenderGround();
+	car.render();
 
 	// Draw Tree Model
 	glPushMatrix();
@@ -203,14 +204,14 @@ void myDisplay(void)
 	//model_car.Draw();
 	//glPopMatrix();
 
-	glPushMatrix();
+	/*glPushMatrix();
 	glColor3f(0, 1, 1);
 	glTranslatef(10, 0, 10);
 	glScalef(0.7, 0.7, 0.7);
 	glRotated(90, 1, 0, 0);
 	model_coin.Draw();
 	glPopMatrix();
-	glColor3f(1, 1, 1);
+	glColor3f(1, 1, 1);*/
 
 	glPushMatrix();
 	glTranslatef(-10, 0, 10);
@@ -224,7 +225,6 @@ void myDisplay(void)
 	model_house.Draw();
 	glPopMatrix();
 
-	car.render();
 
 
 	//sky box
@@ -251,11 +251,33 @@ void myDisplay(void)
 //=======================================================================
 // Keyboard Function
 //=======================================================================
+void keyboard(unsigned char key, int x, int y) {
+	switch (key)
+	{
+	case 'w':
+		car.accelerate();
+		break;
+	case 's':
+		car.reverse();
+		break;
+	case 'a':
+		car.turnLeft();
+		break;
+	case 'd':
+		car.turnRight();
+		break;
+	case 27:
+		exit(0);
+		break;
+	default:
+		break;
+	}
+}
 void myKeyboard(unsigned char button, int x, int y)
 {
 	switch (button)
 	{
-	case 'w':
+	case 'q':
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		break;
 	case 'r':
@@ -267,7 +289,7 @@ void myKeyboard(unsigned char button, int x, int y)
 	default:
 		break;
 	}
-
+	keyboard(button, x, y);
 	glutPostRedisplay();
 }
 
@@ -357,6 +379,25 @@ void LoadAssets()
 	tex_ground.Load("Textures/ground.bmp");
 	loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
 }
+void update()
+{
+	static float lastTime = 0;
+	float currentTime = glutGet(GLUT_ELAPSED_TIME);
+	float deltaTime = (currentTime - lastTime) / 1000;
+
+	car.update(deltaTime);
+	glutPostRedisplay();
+}
+
+void keyboardUp(unsigned char key, int x, int y) {
+	switch (key) {
+	case 'w': car.stopAcceleration(); break;
+	case 's': car.stopAcceleration(); break;
+	case 'a': case 'd':
+		car.stopTurning(); break; 
+	}
+}
+
 
 //=======================================================================
 // Main Function
@@ -376,6 +417,7 @@ void main(int argc, char** argv)
 	glutDisplayFunc(myDisplay);
 
 	glutKeyboardFunc(myKeyboard);
+	glutKeyboardUpFunc(keyboardUp);
 
 	glutMotionFunc(myMotion);
 
@@ -383,8 +425,10 @@ void main(int argc, char** argv)
 
 	glutReshapeFunc(myReshape);
 
-	myInit();
+	glutIdleFunc(update);
 
+	myInit();
+	
 	LoadAssets();
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
