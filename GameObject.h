@@ -10,6 +10,7 @@ public:
 	Vector3 right; // Right vector of object
 	Model_3DS model; // 3D model of object
 	float angle;
+	float pitch;
 	GameObject() {
 		position = Vector3(0, 0, 0);
 		size = Vector3(1, 1, 1);

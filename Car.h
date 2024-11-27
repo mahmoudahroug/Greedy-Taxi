@@ -1,7 +1,7 @@
 #pragma once
-#define ACCELERATION 0.000001f
-#define BRAKE_FORCE 0.000001f
-#define ANGULAR_SPEED 0.05f
+#define ACCELERATION 2
+#define BRAKE_FORCE 2
+#define ANGULAR_SPEED 30
 #include <iostream>
 #include "Vector3.h"
 #include "DynamicObject.h"
@@ -21,18 +21,22 @@ public:
 	void stopTurning();
 	void drawVectors();
 	Car() : angularSpeed(0) {
-		maxSpeed = 0.01f;
+		maxSpeed = 5;
 		size = Vector3(2, 2, 5);
 	}
 private:
-	void rotateY(float rad) {
-		// Rotate the direction vector around the Y-axis
+	void rotate(float rad) {
 		float cosA = cos(rad);
 		float sinA = sin(rad);
 		//float newX = front.x * cosA - front.z * sinA;
 		//float newZ = front.x * sinA + front.z * cosA;
 
+		// front -> (sinA, 0, cosA) (no y component / incline)
 		front = Vector3(sinA, front.y, cosA);
+		right = Vector3(front.z, front.y, -front.x);
+		// for incline
+		// cosB = cos (pitch); sinB = sin(pitch)
+		// front -> (cosB sinA, sinB , cosB cosA)
 	}
 };
 

@@ -12,7 +12,7 @@ public:
 	float acceleration;
 	float gravity;
 
-	DynamicObject() : maxSpeed(0.1f) {
+	DynamicObject() : maxSpeed(0.05f) {
 		velocity = Vector3(0, 0, 0);
 		speed = 0;
 		accelerationVector = Vector3(0, 0, 0);

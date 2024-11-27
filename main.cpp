@@ -17,7 +17,7 @@ Car car;
 GLdouble fovy = 45.0;
 GLdouble aspectRatio = (GLdouble)WIDTH / (GLdouble)HEIGHT;
 GLdouble zNear = 0.1;
-GLdouble zFar = 1000;
+GLdouble zFar = 100;
 
 class Vector
 {
@@ -49,6 +49,7 @@ Model_3DS model_tree;
 Model_3DS model_car;
 Model_3DS model_coin;
 Model_3DS model_money;
+Model_3DS model_city;
 
 // Textures
 GLTexture tex_ground;
@@ -198,20 +199,20 @@ void myDisplay(void)
 	model_tree.Draw();
 	glPopMatrix();
 
-	//glPushMatrix();
-	//glTranslatef(-10, 0, -10);
-	////glScalef(100, 100, 100);
-	//model_car.Draw();
-	//glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-10, 0, -10);
+	glScalef(100, 100, 100);
+	model_car.Draw();
+	glPopMatrix();
 
-	/*glPushMatrix();
+	glPushMatrix();
 	glColor3f(0, 1, 1);
 	glTranslatef(10, 0, 10);
 	glScalef(0.7, 0.7, 0.7);
 	glRotated(90, 1, 0, 0);
 	model_coin.Draw();
 	glPopMatrix();
-	glColor3f(1, 1, 1);*/
+	glColor3f(1, 1, 1);
 
 	glPushMatrix();
 	glTranslatef(-10, 0, 10);
@@ -224,6 +225,8 @@ void myDisplay(void)
 	glRotatef(90.f, 1, 0, 0);
 	model_house.Draw();
 	glPopMatrix();
+
+	model_city.Draw();
 
 
 
@@ -373,7 +376,8 @@ void LoadAssets()
 	//model_car.Load("Models/car/Mercedes.3ds");
 
 	model_coin.Load("Models/coin/coinOBJ.3ds");
-	model_money.Load("Models/money/money.3ds");
+	//model_money.Load("Models/money/money.3ds");
+	model_city.Load("Models/city/city.3ds");
 
 	// Loading texture files
 	tex_ground.Load("Textures/ground.bmp");
@@ -384,6 +388,7 @@ void update()
 	static float lastTime = 0;
 	float currentTime = glutGet(GLUT_ELAPSED_TIME);
 	float deltaTime = (currentTime - lastTime) / 1000;
+	lastTime = currentTime;
 
 	car.update(deltaTime);
 	glutPostRedisplay();

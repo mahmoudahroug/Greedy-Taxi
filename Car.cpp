@@ -40,7 +40,7 @@ void Car::update(float deltaTime) {
 		angle -= 360;
 	}
 	float rad = angle * 3.14159f / 180.0f;
-	rotateY(rad);
+	rotate(rad);
 	velocity = front * speed;
 	position = position + velocity * deltaTime;
 
