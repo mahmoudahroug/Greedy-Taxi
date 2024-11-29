@@ -377,7 +377,7 @@ void LoadAssets()
 
 	model_coin.Load("Models/coin/coinOBJ.3ds");
 	//model_money.Load("Models/money/money.3ds");
-	model_city.Load("Models/city/city.3ds");
+	//model_city.Load("Models/city/city.3ds");
 
 	// Loading texture files
 	tex_ground.Load("Textures/ground.bmp");

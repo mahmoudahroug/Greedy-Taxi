@@ -35,7 +35,7 @@ void Car::update(float deltaTime) {
 		speed = 0;
 	}
 
-	angle += angularSpeed * deltaTime;
+	angle += angularSpeed * speed * deltaTime;
 	if (angle > 360) {
 		angle -= 360;
 	}
