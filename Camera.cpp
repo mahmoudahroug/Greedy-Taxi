@@ -1,31 +1,30 @@
 #include "Camera.h"
 Camera* Camera::instance = nullptr; 
-
 Camera::Camera()
     : eye(10, 5, 10),
     center(0,3.0,0),
-    cameraYaw(0.0), cameraPitch(0.0), cameraDistance(10.0),
+    cameraYaw(0.0), cameraPitch(5.0), cameraDistance(5.0),
     lastMouseX(0), lastMouseY(0), preset(false) {
 }
 
-void Camera::updateEyePosition() {
+void Camera::updateEyePosition(Vector3 position, float cameraYaw) {
     if (!preset) {
-        eye.x = center.x + cameraDistance * cos(cameraPitch) * sin(cameraYaw);
-        eye.y = center.y + cameraDistance * sin(cameraPitch);
-        eye.z = center.z + cameraDistance * cos(cameraPitch) * cos(cameraYaw);
+        eye.x = position.x + cameraDistance * cos(cameraPitch) * sin(cameraYaw*M_PI/180);
+        eye.y = position.y + cameraDistance * sin(cameraPitch);
+        eye.z = position.z + cameraDistance * cos(cameraPitch) * cos(cameraYaw * M_PI / 180);
     }
 }
 
-void Camera::setup() {
-    updateEyePosition();
+void Camera::setup(Vector3 position, float cameraYaw) {
+    updateEyePosition(position, cameraYaw);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(100, 640.0 / 480.0, 0.001, 100);
+    gluPerspective(100, 1280.0 / 720.0, 0.1, 1000);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, 0, 1, 0);
+    gluLookAt(eye.x, eye.y, eye.z, position.x, position.y, position.z, 0, 1, 0);
 }
 
 void Camera::handleMouseMotion(int x, int y) {
@@ -53,6 +52,10 @@ void Camera::handleMouseButton(int button, int state, int x, int y) {
     else {
         glutMotionFunc(nullptr); // Unregister motion callback
     }
+}
+
+void Camera::carFirstPerson() {
+    preset = true;
 }
 
 void Camera::setView(int view) {
@@ -84,6 +87,5 @@ void Camera::setView(int view) {
     case 8: center.y += 0.2; break;
     case 9: center.y -= 0.2; break;
     }
-    updateEyePosition();
     glutPostRedisplay();  // Redraw scene
 }

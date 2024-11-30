@@ -109,7 +109,7 @@ void myInit(void)
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
 
-	mainCamera.setup();
+	mainCamera.setup(car.position, car.angle);
 
 	//*******************************************************************************************//
 	// fovy:			Angle between the bottom and top of the projectors, in degrees.			 //
@@ -173,7 +173,7 @@ void myDisplay(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	mainCamera.setup();
+	mainCamera.setup(car.position, car.angle);
 
 	GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
 	GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
@@ -347,7 +347,7 @@ void myReshape(int w, int h)
 	// set the drawable region of the window
 	glViewport(0, 0, w, h);
 		
-	mainCamera.setup();
+	mainCamera.setup(car.position, car.angle);
 }
 
 //=======================================================================

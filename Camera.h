@@ -1,7 +1,7 @@
 #pragma once
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <Vector3.h>
+#include "Vector3.h"
 #include <glut.h>
 
 
@@ -15,16 +15,19 @@ private:
     double cameraYaw, cameraPitch;     // Camera angles
     double cameraDistance;             // Distance from center point
     int lastMouseX, lastMouseY;        // For mouse movement tracking
-    bool preset;                       // Camera preset flag
+    bool preset;                 
+    // Camera preset flag
 
-    void updateEyePosition();
+
 
 public:
     Camera();
-    void setup();
+    void setup(Vector3 position, float cameraYaw);
+    void updateEyePosition(Vector3 position, float cameraYaw);
     void handleMouseMotion(int x, int y);
     void handleMouseButton(int button, int state, int x, int y);
     void setView(int view);
+	void carFirstPerson();
 };
 
 
