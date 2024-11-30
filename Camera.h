@@ -22,12 +22,12 @@ private:
 
 public:
     Camera();
-    void setup(Vector3 position, float cameraYaw);
+    void setup(Vector3 position, float cameraYaw, Vector3 front);
     void updateEyePosition(Vector3 position, float cameraYaw);
     void handleMouseMotion(int x, int y);
     void handleMouseButton(int button, int state, int x, int y);
-    void setView(int view);
 	void carFirstPerson();
+    void carThirdPerson();
 };
 
 

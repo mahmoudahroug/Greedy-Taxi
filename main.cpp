@@ -8,7 +8,7 @@
 #include "Car.h"
 #include <vector>
 #include <utility> // for std::pair
-
+#include "Camera.h"
 
 // Store gas tank positions
 std::vector<std::pair<int, int>> gasTankPositions;
@@ -43,12 +43,7 @@ public:
 		z += value;
 	}
 };
-
-Vector Eye(20, 5, 20);
-Vector At(0, 0, 0);
-Vector Up(0, 1, 0);
-
-int cameraZoom = 0;
+Camera mainCamera;
 
 // Model Variables
 Model_3DS model_house;
@@ -126,22 +121,15 @@ void myInit(void)
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
-	glMatrixMode(GL_PROJECTION);
 
-	glLoadIdentity();
-
-	gluPerspective(fovy, aspectRatio, zNear, zFar);
 	//*******************************************************************************************//
 	// fovy:			Angle between the bottom and top of the projectors, in degrees.			 //
 	// aspectRatio:		Ratio of width to height of the clipping plane.							 //
 	// zNear and zFar:	Specify the front and back clipping planes distances from camera.		 //
 	//*******************************************************************************************//
-	car.init(Vector3(-5, 0.1, 7.5), Vector3(0.03, 0.03, 0.03),90, "models/car/xpander.3ds");
-	glMatrixMode(GL_MODELVIEW);
+	car.init(Vector3(-5, 0.1, 7.5), Vector3(1, 1, 1),90, "models/car/xpander.3ds");
 
-	glLoadIdentity();
-
-	gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);
+	mainCamera.setup(car.position, car.angle, car.front);
 	//*******************************************************************************************//
 	// EYE (ex, ey, ez): defines the location of the camera.									 //
 	// AT (ax, ay, az):	 denotes the direction where the camera is aiming at.					 //
@@ -218,6 +206,8 @@ void myDisplay(void)
 {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	mainCamera.setup(car.position, car.angle, car.front);
 
 	// Light setup
 	GLfloat lightIntensity[] = { 0.7f, 0.7f, 0.7f, 1.0f };
@@ -405,7 +395,7 @@ void myKeyboard(unsigned char key, int x, int y)
 		car.accelerate();
 		break;
 	case 's':
-		car.reverse();
+		car.brake();
 		break;
 	case 'a':
 		car.turnLeft();
@@ -413,39 +403,28 @@ void myKeyboard(unsigned char key, int x, int y)
 	case 'd':
 		car.turnRight();
 		break;
-	case 27:
+	case '1':
+		mainCamera.carFirstPerson();
+		break;
+	case '3':
+		mainCamera.carThirdPerson();
+		break;
+;	case 27:
 		exit(0);
 		break;
 	default:
 		break;
 	}
-
 	glutPostRedisplay();
 }
+
 
 //=======================================================================
 // Motion Function
 //=======================================================================
 void myMotion(int x, int y)
 {
-	y = HEIGHT - y;
-
-	if (cameraZoom - y > 0)
-	{
-		Eye.x += -0.1;
-		Eye.z += -0.1;
-	}
-	else
-	{
-		Eye.x += 0.1;
-		Eye.z += 0.1;
-	}
-
-	cameraZoom = y;
-
-	glLoadIdentity();	//Clear Model_View Matrix
-
-	gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);	//Setup Camera with modified paramters
+	mainCamera.handleMouseMotion(x, y);
 
 	GLfloat light_position[] = { 0.0f, 10.0f, 0.0f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
@@ -458,12 +437,7 @@ void myMotion(int x, int y)
 //=======================================================================
 void myMouse(int button, int state, int x, int y)
 {
-	y = HEIGHT - y;
-
-	if (state == GLUT_DOWN)
-	{
-		cameraZoom = y;
-	}
+	mainCamera.handleMouseButton(button, state, x, y);
 }
 
 //=======================================================================
@@ -481,15 +455,7 @@ void myReshape(int w, int h)
 	// set the drawable region of the window
 	glViewport(0, 0, w, h);
 
-	// set up the projection matrix 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(fovy, (GLdouble)WIDTH / (GLdouble)HEIGHT, zNear, zFar);
-
-	// go back to modelview matrix so we can move the objects about
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);
+	mainCamera.setup(car.position, car.angle, car.front);
 }
 
 //=======================================================================
@@ -502,8 +468,7 @@ void LoadAssets()
 	model_house.Load("models/house/house.3DS");
 	model_tree.Load("models/tree/Tree1.3ds");
 	model_road.Load("models/road/untitled.3ds");
-	model_car.Load("models/car/xpander.3ds");
-	model_rock.Load("models/rock/arid_arch.3ds");
+	//model_rock.Load("models/rock/arid_arch.3ds");
 	model_fuel.Load("models/fuel/gas.3DS");
 	model_mountain.Load("models/mountain/mountain.3DS");
 	model_chest.Load("models/chest/chest.3ds");
@@ -549,6 +514,8 @@ void main(int argc, char** argv)
 	glutInitWindowPosition(100, 150);
 
 	glutCreateWindow(title);
+
+	Camera::instance = &mainCamera;
 
 	glutDisplayFunc(myDisplay);
 

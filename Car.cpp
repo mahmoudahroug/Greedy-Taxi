@@ -57,11 +57,12 @@ void Car::render() {
 	//glScalef(5, 5, 5);
 	////model.render();
 	//glPopMatrix();
-	////renderBoundingBox();
+	renderBoundingBox();
 	glPushMatrix();
 	glTranslatef(position.x, position.y, position.z);
 	glRotatef(angle, 0, 1, 0);
 	glScalef(size.x, size.y, -size.z);
+	glScalef(0.02, 0.02, 0.02);
 	model.Draw();
 	glPopMatrix();
 
