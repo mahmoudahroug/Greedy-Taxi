@@ -3,7 +3,7 @@ Camera* Camera::instance = nullptr;
 
 Camera::Camera()
     : eye(10, 5, 10),
-    center(0,1.0,0),
+    center(0,3.0,0),
     cameraYaw(0.0), cameraPitch(0.0), cameraDistance(10.0),
     lastMouseX(0), lastMouseY(0), preset(false) {
 }
