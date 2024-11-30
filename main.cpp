@@ -9,7 +9,11 @@
 #include <vector>
 #include <utility> // for std::pair
 #include "Camera.h"
+#include "irrKlang.h"
+using namespace irrklang;
 
+ISoundEngine* engine = nullptr;
+void playHornSound();
 // Store gas tank positions
 std::vector<std::pair<int, int>> gasTankPositions;
 bool gasGenerated = false;
@@ -241,9 +245,9 @@ void myDisplay(void)
 	model_mountain.Draw();
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(20, 1, 20);
+	glTranslatef(20, 5, 20);
 	glRotated(180, 0, 1, 0);
-	glScalef(0.3, 0.3, 0.3);
+	//glScalef(0.01, 0.01, 0.01);
 	model_chest.Draw();
 	glPopMatrix();
 	// Draw Car
@@ -412,6 +416,8 @@ void myKeyboard(unsigned char key, int x, int y)
 ;	case 27:
 		exit(0);
 		break;
+	case 'h':
+	playHornSound();
 	default:
 		break;
 	}
@@ -471,7 +477,7 @@ void LoadAssets()
 	//model_rock.Load("models/rock/arid_arch.3ds");
 	model_fuel.Load("models/fuel/gas.3DS");
 	model_mountain.Load("models/mountain/mountain.3DS");
-	model_chest.Load("models/chest/chest.3ds");
+	model_chest.Load("models/treasure/box.3ds");
 	model_cactus.Load("models/cactus/cactus1.3ds");
 	model_stone1.Load("models/stones/stone1.3ds");
 	model_stone2.Load("models/stones/stone2.3ds");
@@ -500,6 +506,17 @@ void keyboardUp(unsigned char key, int x, int y) {
 	}
 }
 
+void playHornSound() {
+	if (engine) engine->play2D("sounds/horn1.mp3", true);
+}
+
+//void playAnimationSound() {
+//	if (engine) engine->play2D(ANIMATION_SOUND_PATH, false);
+//}
+//
+//void playCollisionSound() {
+//	if (engine) engine->play2D(COLLISION_SOUND_PATH, false);
+//}
 //=======================================================================
 // Main Function
 //=======================================================================
@@ -516,7 +533,10 @@ void main(int argc, char** argv)
 	glutCreateWindow(title);
 
 	Camera::instance = &mainCamera;
-
+	engine = createIrrKlangDevice();
+	if (!engine) {
+		std::cerr << "Sound engine could not start." << std::endl;
+	}
 	glutDisplayFunc(myDisplay);
 
 	glutIdleFunc(update);
