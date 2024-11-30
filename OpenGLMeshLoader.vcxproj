@@ -93,6 +93,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model_3DS.cpp" />
     <ClCompile Include="OpenGLMeshLoader.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -102,6 +103,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GLTexture.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Model_3DS.h" />
   </ItemGroup>
