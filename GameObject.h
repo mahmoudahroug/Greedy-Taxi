@@ -23,16 +23,16 @@ public:
 		pitch = 0;
 		maxSide = size.x > size.z ? size.x : size.z;
 	}
-	GameObject(Vector3 pos, Vector3 s, Model_3DS m) {
-		position = pos;
-		size = s;
-		model = m;
-		front = Vector3(0, 0, 1);
-		right = Vector3(1, 0, 0);
-		angle = 0;
-		pitch = 0;
-		maxSide = size.x > size.z ? size.x : size.z;
-	}
+	//GameObject(Vector3 pos, Vector3 s, Model_3DS* m) {
+	//	position = pos;
+	//	size = s;
+	//	model = m;
+	//	front = Vector3(0, 0, 1);
+	//	right = Vector3(1, 0, 0);
+	//	angle = 0;
+	//	pitch = 0;
+	//	maxSide = size.x > size.z ? size.x : size.z;
+	//}
 	Vector3 getMin() {
 		return position - Vector3(maxSide, maxSide, maxSide) * 0.5;
 	}
