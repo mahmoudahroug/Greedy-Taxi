@@ -6,10 +6,13 @@
 #include <cstdlib>  // for rand() and srand()
 #include <ctime>  
 #include <vector>
-#include <utility> // for std::pair
+#include "Camera.h"
+#include "irrKlang.h"
 #include "Desert.h"
+using namespace irrklang;
 
-
+ISoundEngine* engine = nullptr;
+void playHornSound();
 int WIDTH = 1280;
 int HEIGHT = 720;
 
@@ -145,6 +148,13 @@ void myDisplay(void)
 void myKeyboard(unsigned char key, int x, int y)
 {
 	desert.myKeyboard(key, x, y);
+	switch (key) {
+	case 'h':
+		playHornSound();
+	default:
+		break;
+	}
+	glutPostRedisplay();
 }
 
 
@@ -214,6 +224,13 @@ void keyboardUp(unsigned char key, int x, int y) {
 	desert.keyboardUp(key, x, y);
 }
 
+//void playAnimationSound() {
+//	if (engine) engine->play2D(ANIMATION_SOUND_PATH, false);
+//}
+//
+//void playCollisionSound() {
+//	if (engine) engine->play2D(COLLISION_SOUND_PATH, false);
+//}
 //=======================================================================
 // Main Function
 //=======================================================================
@@ -230,7 +247,10 @@ void main(int argc, char** argv)
 	glutCreateWindow(title);
 
 	//Camera::instance = &mainCamera;
-
+	engine = createIrrKlangDevice();
+	if (!engine) {
+		std::cerr << "Sound engine could not start." << std::endl;
+	}
 	glutDisplayFunc(myDisplay);
 
 	glutIdleFunc(update);
