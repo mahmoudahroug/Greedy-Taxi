@@ -19,5 +19,6 @@ public:
 		acceleration = 0;
 		gravity = 0;
 	}
+
 };
 

@@ -1,10 +1,11 @@
 #pragma once
-#define ACCELERATION 2
-#define BRAKE_FORCE 2
-#define ANGULAR_SPEED 30
+#define ACCELERATION 10
+#define BRAKE_FORCE 10
+#define ANGULAR_SPEED 1
 #include <iostream>
 #include "Vector3.h"
 #include "DynamicObject.h"
+#include <string>
 class Car : public DynamicObject
 {
 public:
@@ -20,9 +21,15 @@ public:
 	void turnRight();
 	void stopTurning();
 	void drawVectors();
-	Car() : angularSpeed(0) {
-		maxSpeed = 5;
-		size = Vector3(2, 2, 5);
+	void init(Vector3 pos, Vector3 s,int angle, char* m);
+	//Car(Vector3 pos, Vector3 s, Model_3DS* m) : angularSpeed(0) {
+	//	DynamicObject(pos, s, m);
+	//	maxSpeed = 5;
+	//	size = Vector3(2, 2, 5);
+	//}
+	Car():angularSpeed(0){
+		maxSpeed = 100;
+		/*size = Vector3(2, 2, 5);*/
 	}
 private:
 	void rotate(float rad) {

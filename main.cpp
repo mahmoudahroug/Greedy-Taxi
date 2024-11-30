@@ -1,25 +1,30 @@
 #include "TextureBuilder.h"
 #include "Model_3DS.h"
 #include "GLTexture.h"
-#include "Car.h"
-#include <iostream>
-#include <fstream>
-#include <Camera.h>
-#include <Vector3.h>
 #include <glut.h>
+#include <iostream>
+#include <cstdlib>  // for rand() and srand()
+#include <ctime>  
+#include "Car.h"
+#include <vector>
+#include <utility> // for std::pair
+#include "Camera.h"
 
+// Store gas tank positions
+std::vector<std::pair<int, int>> gasTankPositions;
+bool gasGenerated = false;
 int WIDTH = 1280;
 int HEIGHT = 720;
 
 GLuint tex;
 char title[] = "3D Model Loader Sample";
-Car car;
+
 
 // 3D Projection Options
 GLdouble fovy = 45.0;
 GLdouble aspectRatio = (GLdouble)WIDTH / (GLdouble)HEIGHT;
 GLdouble zNear = 0.1;
-GLdouble zFar = 1000;
+GLdouble zFar = 100;
 
 class Vector
 {
@@ -38,18 +43,26 @@ public:
 		z += value;
 	}
 };
-Camera mainCamera;	
+Camera mainCamera;
 
 // Model Variables
 Model_3DS model_house;
 Model_3DS model_tree;
+Model_3DS model_road;
 Model_3DS model_car;
-Model_3DS model_coin;
-Model_3DS model_money;
-Model_3DS model_city;
-
+Model_3DS model_rock;
+Model_3DS model_fuel;
+Model_3DS model_mountain;
+Model_3DS model_chest;
+Model_3DS model_cactus;
+Model_3DS model_stone1;
+Model_3DS model_stone2;
+Model_3DS model_stone3;
+Model_3DS model_bush;
 // Textures
 GLTexture tex_ground;
+GLTexture tex_road;
+Car car;
 
 //=======================================================================
 // Lighting Configuration Function
@@ -109,25 +122,23 @@ void myInit(void)
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
 
-	mainCamera.setup(car.position, car.angle);
-
 	//*******************************************************************************************//
 	// fovy:			Angle between the bottom and top of the projectors, in degrees.			 //
 	// aspectRatio:		Ratio of width to height of the clipping plane.							 //
 	// zNear and zFar:	Specify the front and back clipping planes distances from camera.		 //
 	//*******************************************************************************************//
+	car.init(Vector3(-5, 0.1, 7.5), Vector3(1, 1, 1),90, "models/car/xpander.3ds");
 
-
-
+	mainCamera.setup(car.position, car.angle, car.front);
 	//*******************************************************************************************//
 	// EYE (ex, ey, ez): defines the location of the camera.									 //
 	// AT (ax, ay, az):	 denotes the direction where the camera is aiming at.					 //
 	// UP (ux, uy, uz):  denotes the upward orientation of the camera.							 //
 	//*******************************************************************************************//
 
-	InitLightSource();		
+	InitLightSource();
 
-	//InitMaterial();
+	InitMaterial();
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -141,8 +152,6 @@ void RenderGround()
 {
 	glDisable(GL_LIGHTING);	// Disable lighting 
 
-	glColor3f(0.6, 0.6, 0.6);	// Dim the ground texture a bit
-
 	glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
 
 	glBindTexture(GL_TEXTURE_2D, tex_ground.texture[0]);	// Bind the ground texture
@@ -151,13 +160,13 @@ void RenderGround()
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);	// Set quad normal direction.
 	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-	glVertex3f(-20, 0, -20);
+	glVertex3f(-200, 0, -200);
 	glTexCoord2f(5, 0);
-	glVertex3f(20, 0, -20);
+	glVertex3f(200, 0, -200);
 	glTexCoord2f(5, 5);
-	glVertex3f(20, 0, 20);
+	glVertex3f(200, 0, 200);
 	glTexCoord2f(0, 5);
-	glVertex3f(-20, 0, 20);
+	glVertex3f(-200, 0, 200);
 	glEnd();
 	glPopMatrix();
 
@@ -169,64 +178,199 @@ void RenderGround()
 //=======================================================================
 // Display Function
 //=======================================================================
+
+void drawGasTank(int x, int z) {
+	glPushMatrix();
+	glTranslatef(x, 0, z);
+	glScalef(0.5, 0.5, 0.5);
+	model_fuel.Draw();
+	glPopMatrix();
+}
+
+void generateGas(int num) {
+	std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed random generator
+
+	for (int i = 0; i < num; i++) {
+		int x = 15 + (i * 5); // Random x position
+		int z = 4 + std::rand() % 8;            // Random z position
+		gasTankPositions.emplace_back(x, z);    // Store position
+	}
+}
+
+void drawGeneratedGasTanks() {
+	for (const auto& pos : gasTankPositions) {
+		drawGasTank(pos.first, pos.second); // Use stored positions
+	}
+}
 void myDisplay(void)
 {
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	mainCamera.setup(car.position, car.angle);
+	mainCamera.setup(car.position, car.angle, car.front);
 
-	GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
+	// Light setup
+	GLfloat lightIntensity[] = { 0.7f, 0.7f, 0.7f, 1.0f };
 	GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 
 	// Draw Ground
 	RenderGround();
+
+	// Infinite Road
+	for (float z = -200; z < 200; z += 2.0f) // Adjust spacing if needed
+	{
+		glPushMatrix();
+		glTranslatef(z, -1, 10);
+		glScalef(1, 1, 1);
+		model_road.Draw();
+		glPopMatrix();
+	}
+	for (float z = -200; z < 200; z += 2.0f) // Adjust spacing if needed
+	{
+		glPushMatrix();
+		glTranslatef(z, -1, 5.6);
+		glScalef(1, 1, 1);
+		model_road.Draw();
+		glPopMatrix();
+	}
+	glPushMatrix();
+	glTranslatef(20, 7, -50);
+	glScalef(0.4, 0.4, 0.4);
+	model_mountain.Draw();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(20, 1, 20);
+	glRotated(180, 0, 1, 0);
+	glScalef(0.3, 0.3, 0.3);
+	model_chest.Draw();
+	glPopMatrix();
+	// Draw Car
 	car.render();
-
-	// Draw Tree Model
-	glPushMatrix();
-	glTranslatef(10, 0, 0);
-	glScalef(0.7, 0.7, 0.7);
-	model_tree.Draw();
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(-10, 0, -10);
-	glScalef(100, 100, 100);
+	/*glPushMatrix();
+	glTranslatef(-5, 0.1, 7.5);
+	glScalef(0.03, 0.03, 0.03);
+	glRotated(-90, 0, 1, 0);
 	model_car.Draw();
+	glPopMatrix();*/
+
+
+	glColor3f(1, 1, 1);
+	// Sandy Color for Rock
+	glPushMatrix();
+	glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f); // Sandy color
+	glRotated(90, 0, 1, 0);
+	glTranslatef(5, 1.5, 10);
+	glScalef(0.01, 0.01, 0.01);
+	model_rock.Draw();
+	glPopMatrix();
+	if (!gasGenerated) {
+		generateGas(25);  // Replace 5 with the number of tanks you want
+		gasGenerated = true;
+	}
+	drawGeneratedGasTanks();
+
+	// Draw Cactus
+	glPushMatrix();
+	for (int i = 0; i < 7; ++i) {
+		glPushMatrix();
+		glTranslatef(-5 + (i * 3), 0, 3);
+		glScalef(0.1, 0.1, 0.1);
+		glRotatef(90.f, 0, 1, 0);
+		glColor3f(0.4f, 0.5f, 0.1f);
+		model_cactus.Draw();
+		glPopMatrix();
+	}
+	glPopMatrix();
+
+	// Draw Stones 
+	glPushMatrix();
+	glTranslatef(-5, -1, 14);
+	glScalef(0.09, 0.09, 0.09);
+	glRotatef(90.f, 0, 1, 0);
+	glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f);
+	model_stone1.Draw();
 	glPopMatrix();
 
 	glPushMatrix();
-	glColor3f(0, 1, 1);
-	glTranslatef(10, 0, 10);
-	glScalef(0.7, 0.7, 0.7);
-	glRotated(90, 1, 0, 0);
-	model_coin.Draw();
+	glTranslatef(-2.5, -1, 16.5);
+	glScalef(0.09, 0.09, 0.09);
+	glRotatef(90.f, 0, 1, 0);
+	glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f);
+	model_stone1.Draw();
 	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(10, -1, 14);
+	glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f);
+	model_stone2.Draw();
+	glPopMatrix();
+
+	// Draw Rock
+	glPushMatrix();
+	glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f); // Sandy color
+	glRotated(90, 0, 1, 0);
+	glTranslatef(5, 1.5, 10);
+	glScalef(0.01, 0.01, 0.01);
+	model_rock.Draw();
+	glPopMatrix();
+
+	// Draw Bush
+	glPushMatrix();
+	glTranslatef(5, 0, 14);
+	glScalef(0.05, 0.05, 0.05);
+	glColor3f(0.3f, 0.3f, 0.1f);
+	model_bush.Draw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(6, 0, 15);
+	glScalef(0.05, 0.05, 0.05);
+	glColor3f(0.3f, 0.3f, 0.1f);
+	model_bush.Draw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(12.5, 0, 14);
+	glScalef(0.05, 0.05, 0.05);
+	glColor3f(0.3f, 0.3f, 0.1f);
+	model_bush.Draw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(13.5, 0, 14);
+	glScalef(0.05, 0.05, 0.05);
+	glColor3f(0.3f, 0.3f, 0.1f);
+	model_bush.Draw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(7, 0, 18);
+	glScalef(0.05, 0.05, 0.05);
+	glColor3f(0.3f, 0.3f, 0.1f);
+	model_bush.Draw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(8, 0, 19);
+	glScalef(0.05, 0.05, 0.05);
+	glColor3f(0.3f, 0.3f, 0.1f);
+	model_bush.Draw();
+	glPopMatrix();
+
+	// Reset color to white for subsequent objects
 	glColor3f(1, 1, 1);
 
+	//// Draw House
+	//glPushMatrix();
+	//glRotatef(90.f, 1, 0, 0);
+	//model_house.Draw();
+	//glPopMatrix();
+
+	//// Skybox (Sphere)
 	glPushMatrix();
-	glTranslatef(-10, 0, 10);
-	glScalef(0.7, 0.7, 0.7);
-	model_money.Draw();
-	glPopMatrix();
-
-	// Draw house Model
-	glPushMatrix();
-	glRotatef(90.f, 1, 0, 0);
-	model_house.Draw();
-	glPopMatrix();
-
-	model_city.Draw();
-
-
-
-	//sky box
-	glPushMatrix();
-
-	GLUquadricObj* qobj;
-	qobj = gluNewQuadric();
+	GLUquadricObj* qobj = gluNewQuadric();
 	glTranslated(50, 0, 0);
 	glRotated(90, 1, 0, 1);
 	glBindTexture(GL_TEXTURE_2D, tex);
@@ -234,26 +378,24 @@ void myDisplay(void)
 	gluQuadricNormals(qobj, GL_SMOOTH);
 	gluSphere(qobj, 100, 100, 100);
 	gluDeleteQuadric(qobj);
-
-
 	glPopMatrix();
-
-
 
 	glutSwapBuffers();
 }
 
+
 //=======================================================================
 // Keyboard Function
 //=======================================================================
-void keyboard(unsigned char key, int x, int y) {
+void myKeyboard(unsigned char key, int x, int y)
+{
 	switch (key)
 	{
 	case 'w':
 		car.accelerate();
 		break;
 	case 's':
-		car.reverse();
+		car.brake();
 		break;
 	case 'a':
 		car.turnLeft();
@@ -261,67 +403,33 @@ void keyboard(unsigned char key, int x, int y) {
 	case 'd':
 		car.turnRight();
 		break;
-	case 27:
+	case '1':
+		mainCamera.carFirstPerson();
+		break;
+	case '3':
+		mainCamera.carThirdPerson();
+		break;
+;	case 27:
 		exit(0);
 		break;
 	default:
 		break;
 	}
-}
-void myKeyboard(unsigned char button, int x, int y)
-{
-	switch (button)
-	{
-	case 'q':
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		break;
-	case 'r':
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		break;
-	case 27:
-		exit(0);
-		break;
-	case '1': // Top view
-		mainCamera.setView(1);
-		break;
-	case '2': // Side view
-		mainCamera.setView(2);
-		break;
-	case '3': // Front view
-		mainCamera.setView(3);
-		break;
-	//x axis and z axis
-	case 'i': mainCamera.setView(4); break;
-
-	case 'k': mainCamera.setView(5); break;
-
-	case 'j': mainCamera.setView(6); break;
-
-	case 'l': mainCamera.setView(7); break;
-
-	//y axis
-	case 'e': mainCamera.setView(8); break;
-
-	case 'c': mainCamera.setView(9); break;
-	default:
-		break;
-	}
-	keyboard(button, x, y);
 	glutPostRedisplay();
 }
+
 
 //=======================================================================
 // Motion Function
 //=======================================================================
 void myMotion(int x, int y)
 {
-
 	mainCamera.handleMouseMotion(x, y);
-
 
 	GLfloat light_position[] = { 0.0f, 10.0f, 0.0f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
+	glutPostRedisplay();	//Re-draw scene 
 }
 
 //=======================================================================
@@ -346,8 +454,8 @@ void myReshape(int w, int h)
 
 	// set the drawable region of the window
 	glViewport(0, 0, w, h);
-		
-	mainCamera.setup(car.position, car.angle);
+
+	mainCamera.setup(car.position, car.angle, car.front);
 }
 
 //=======================================================================
@@ -355,17 +463,22 @@ void myReshape(int w, int h)
 //=======================================================================
 void LoadAssets()
 {
+
 	// Loading Model files
-	model_house.Load("Models/house/house.3DS");
-	model_tree.Load("Models/tree/Tree1.3ds");
-	//model_car.Load("Models/car/Mercedes.3ds");
-
-	model_coin.Load("Models/coin/coinOBJ.3ds");
-	//model_money.Load("Models/money/money.3ds");
-	//model_city.Load("Models/city/city.3ds");
-
+	model_house.Load("models/house/house.3DS");
+	model_tree.Load("models/tree/Tree1.3ds");
+	model_road.Load("models/road/untitled.3ds");
+	//model_rock.Load("models/rock/arid_arch.3ds");
+	model_fuel.Load("models/fuel/gas.3DS");
+	model_mountain.Load("models/mountain/mountain.3DS");
+	model_chest.Load("models/chest/chest.3ds");
+	model_cactus.Load("models/cactus/cactus1.3ds");
+	model_stone1.Load("models/stones/stone1.3ds");
+	model_stone2.Load("models/stones/stone2.3ds");
+	model_bush.Load("models/bush/bush2.3ds");
 	// Loading texture files
-	tex_ground.Load("Textures/ground.bmp");
+	tex_ground.Load("Textures/sand1.bmp");
+	//tex_road.Load("models/road/untitled.bmp");
 	loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
 }
 void update()
@@ -378,19 +491,14 @@ void update()
 	car.update(deltaTime);
 	glutPostRedisplay();
 }
-
 void keyboardUp(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'w': car.stopAcceleration(); break;
 	case 's': car.stopAcceleration(); break;
 	case 'a': case 'd':
-		car.stopTurning(); break; 
-	
-
+		car.stopTurning(); break;
 	}
-
 }
-
 
 //=======================================================================
 // Main Function
@@ -398,10 +506,6 @@ void keyboardUp(unsigned char key, int x, int y) {
 void main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
-
-
-
-
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
@@ -415,6 +519,7 @@ void main(int argc, char** argv)
 
 	glutDisplayFunc(myDisplay);
 
+	glutIdleFunc(update);
 	glutKeyboardFunc(myKeyboard);
 	glutKeyboardUpFunc(keyboardUp);
 
@@ -424,11 +529,8 @@ void main(int argc, char** argv)
 
 	glutReshapeFunc(myReshape);
 
-	glutIdleFunc(update);
-
 	myInit();
 
-	
 	LoadAssets();
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
