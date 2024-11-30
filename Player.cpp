@@ -2,8 +2,8 @@
 
 void Player::init(Vector3 pos, Vector3 s, int angle, char* m)
 {
-	camera.setup(car.position, car.angle, car.front);
 	car.init(pos, s, angle, m);
+	camera.setup(car.position, car.angle, car.front);
 }
 void Player::display()
 {

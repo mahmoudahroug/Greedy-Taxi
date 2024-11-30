@@ -56,6 +56,7 @@ void Camera::handleMouseButton(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         lastMouseX = x;
         lastMouseY = y;
+		//this->handleMouseMotion(x, y);
         glutMotionFunc([](int x, int y) { instance->handleMouseMotion(x, y); });
     }
     else {
