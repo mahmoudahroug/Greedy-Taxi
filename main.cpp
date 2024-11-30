@@ -4,6 +4,8 @@
 #include "Car.h"
 #include <iostream>
 #include <fstream>
+#include <Camera.h>
+#include <Vector3.h>
 #include <glut.h>
 
 int WIDTH = 1280;
@@ -17,7 +19,7 @@ Car car;
 GLdouble fovy = 45.0;
 GLdouble aspectRatio = (GLdouble)WIDTH / (GLdouble)HEIGHT;
 GLdouble zNear = 0.1;
-GLdouble zFar = 100;
+GLdouble zFar = 1000;
 
 class Vector
 {
@@ -36,12 +38,7 @@ public:
 		z += value;
 	}
 };
-
-Vector Eye(20, 5, 20);
-Vector At(0, 0, 0);
-Vector Up(0, 1, 0);
-
-int cameraZoom = 0;
+Camera mainCamera;	
 
 // Model Variables
 Model_3DS model_house;
@@ -111,29 +108,24 @@ void myInit(void)
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
-	glMatrixMode(GL_PROJECTION);
 
-	glLoadIdentity();
+	mainCamera.setup(car.position, car.angle);
 
-	gluPerspective(fovy, aspectRatio, zNear, zFar);
 	//*******************************************************************************************//
 	// fovy:			Angle between the bottom and top of the projectors, in degrees.			 //
 	// aspectRatio:		Ratio of width to height of the clipping plane.							 //
 	// zNear and zFar:	Specify the front and back clipping planes distances from camera.		 //
 	//*******************************************************************************************//
 
-	glMatrixMode(GL_MODELVIEW);
 
-	glLoadIdentity();
 
-	gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);
 	//*******************************************************************************************//
 	// EYE (ex, ey, ez): defines the location of the camera.									 //
 	// AT (ax, ay, az):	 denotes the direction where the camera is aiming at.					 //
 	// UP (ux, uy, uz):  denotes the upward orientation of the camera.							 //
 	//*******************************************************************************************//
 
-	InitLightSource();
+	InitLightSource();		
 
 	//InitMaterial();
 
@@ -181,7 +173,7 @@ void myDisplay(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+	mainCamera.setup(car.position, car.angle);
 
 	GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
 	GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
@@ -289,6 +281,28 @@ void myKeyboard(unsigned char button, int x, int y)
 	case 27:
 		exit(0);
 		break;
+	case '1': // Top view
+		mainCamera.setView(1);
+		break;
+	case '2': // Side view
+		mainCamera.setView(2);
+		break;
+	case '3': // Front view
+		mainCamera.setView(3);
+		break;
+	//x axis and z axis
+	case 'i': mainCamera.setView(4); break;
+
+	case 'k': mainCamera.setView(5); break;
+
+	case 'j': mainCamera.setView(6); break;
+
+	case 'l': mainCamera.setView(7); break;
+
+	//y axis
+	case 'e': mainCamera.setView(8); break;
+
+	case 'c': mainCamera.setView(9); break;
 	default:
 		break;
 	}
@@ -301,29 +315,13 @@ void myKeyboard(unsigned char button, int x, int y)
 //=======================================================================
 void myMotion(int x, int y)
 {
-	y = HEIGHT - y;
 
-	if (cameraZoom - y > 0)
-	{
-		Eye.x += -0.1;
-		Eye.z += -0.1;
-	}
-	else
-	{
-		Eye.x += 0.1;
-		Eye.z += 0.1;
-	}
+	mainCamera.handleMouseMotion(x, y);
 
-	cameraZoom = y;
-
-	glLoadIdentity();	//Clear Model_View Matrix
-
-	gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);	//Setup Camera with modified paramters
 
 	GLfloat light_position[] = { 0.0f, 10.0f, 0.0f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-	glutPostRedisplay();	//Re-draw scene 
 }
 
 //=======================================================================
@@ -331,12 +329,7 @@ void myMotion(int x, int y)
 //=======================================================================
 void myMouse(int button, int state, int x, int y)
 {
-	y = HEIGHT - y;
-
-	if (state == GLUT_DOWN)
-	{
-		cameraZoom = y;
-	}
+	mainCamera.handleMouseButton(button, state, x, y);
 }
 
 //=======================================================================
@@ -353,16 +346,8 @@ void myReshape(int w, int h)
 
 	// set the drawable region of the window
 	glViewport(0, 0, w, h);
-
-	// set up the projection matrix 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(fovy, (GLdouble)WIDTH / (GLdouble)HEIGHT, zNear, zFar);
-
-	// go back to modelview matrix so we can move the objects about
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);
+		
+	mainCamera.setup(car.position, car.angle);
 }
 
 //=======================================================================
@@ -400,7 +385,10 @@ void keyboardUp(unsigned char key, int x, int y) {
 	case 's': car.stopAcceleration(); break;
 	case 'a': case 'd':
 		car.stopTurning(); break; 
+	
+
 	}
+
 }
 
 
@@ -411,6 +399,10 @@ void main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
 
+
+
+
+
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
 	glutInitWindowSize(WIDTH, HEIGHT);
@@ -418,6 +410,8 @@ void main(int argc, char** argv)
 	glutInitWindowPosition(100, 150);
 
 	glutCreateWindow(title);
+
+	Camera::instance = &mainCamera;
 
 	glutDisplayFunc(myDisplay);
 
@@ -433,6 +427,7 @@ void main(int argc, char** argv)
 	glutIdleFunc(update);
 
 	myInit();
+
 	
 	LoadAssets();
 	glEnable(GL_DEPTH_TEST);

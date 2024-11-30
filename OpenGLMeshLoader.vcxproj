@@ -83,6 +83,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="OpenGLMeshLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Car.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="DynamicObject.h" />
