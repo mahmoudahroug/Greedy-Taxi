@@ -244,7 +244,7 @@ void main(int argc, char** argv)
 
 	glutInitWindowSize(WIDTH, HEIGHT);
 
-	glutInitWindowPosition(100, 150);
+	glutInitWindowPosition(0, 0);
 
 	glutCreateWindow(title);
 
