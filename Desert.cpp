@@ -4,13 +4,15 @@ void Desert::generateGas(int num) {
 	std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed random generator
 
 	for (int i = 0; i < num; i++) {
-		int x = 15 + (i * 5); // Random x position
-		int z = 4 + std::rand() % 8;            // Random z position
-		gasTankPositions.emplace_back(x, z);    // Store position
+		float x = 50 + (i * 50); // Random x position
+		float z = 4 + std::rand() % 8;// Random z position
+		GameObject g;
+		g.init(Vector3(x, 0, z), Vector3(0.5, 0.5, 0.5), 0, "models/fuel/gas.3DS");
+		gasTanks.emplace_back(g);    // Store position
 	}
 }
 void Desert::init() {
-	player.init(Vector3(-5, 0.1, 7.5), Vector3(1, 1, 1), 90, "models/car/xpander.3ds");
+	player.init(Vector3(-5, 0.1, 7.5), Vector3(0.02, 0.02, -0.02), 90, "models/car/xpander.3ds");
 	generateGas(25);
 	Camera::instance = &player.camera;
 }
@@ -26,13 +28,13 @@ void Desert::renderGround()
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);	// Set quad normal direction.
 	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-	glVertex3f(-200, 0, -200);
+	glVertex3f(-1500, 0, -1500);
 	glTexCoord2f(5, 0);
-	glVertex3f(200, 0, -200);
+	glVertex3f(1500, 0, -1500);
 	glTexCoord2f(5, 5);
-	glVertex3f(200, 0, 200);
+	glVertex3f(1500, 0, 1500);
 	glTexCoord2f(0, 5);
-	glVertex3f(-200, 0, 200);
+	glVertex3f(-1500, 0, 1500);
 	glEnd();
 	glPopMatrix();
 
@@ -49,8 +51,14 @@ void Desert::drawGasTank(int x, int z) {
 }
 
 void Desert::drawGeneratedGasTanks() {
-	for (const auto& pos : gasTankPositions) {
-		drawGasTank(pos.first, pos.second); // Use stored positions
+	for (auto& tank : gasTanks) {
+		tank.render();
+	}
+}
+void Desert::checkCollision() {
+	
+	if (collision.checkCollisionOBB(player, gasTanks[0])) {
+		std::cout << "collided" << "\n";
 	}
 }
 void Desert::display() {
@@ -66,7 +74,7 @@ void Desert::display() {
 	renderGround();
 
 	// Infinite Road
-	for (float z = -200; z < 200; z += 2.0f) // Adjust spacing if needed
+	for (float z = -1500; z < 1500; z += 2.0f) // Adjust spacing if needed
 	{
 		glPushMatrix();
 		glTranslatef(z, -1, 10);
@@ -74,7 +82,7 @@ void Desert::display() {
 		model_road.Draw();
 		glPopMatrix();
 	}
-	for (float z = -200; z < 200; z += 2.0f) // Adjust spacing if needed
+	for (float z = -1500; z < 1500; z += 2.0f) // Adjust spacing if needed
 	{
 		glPushMatrix();
 		glTranslatef(z, -1, 5.6);
@@ -198,21 +206,24 @@ void Desert::display() {
 	// Reset color to white for subsequent objects
 	glColor3f(1, 1, 1);
 
-	//// Draw House
-	//glPushMatrix();
-	//glRotatef(90.f, 1, 0, 0);
-	//model_house.Draw();
-	//glPopMatrix();
+	// Draw House
+	glPushMatrix();
+	glTranslatef(25, 0, -15);
+	glRotatef(90.f, 1, 0, 0);
+	glRotatef(45.f, 0, 0, 1);
+	
+	model_house.Draw();
+	glPopMatrix();
 
 	//// Skybox (Sphere)
 	glPushMatrix();
 	GLUquadricObj* qobj = gluNewQuadric();
-	glTranslated(50, 0, 0);
+	glTranslated(800, 0, 0);
 	glRotated(90, 1, 0, 1);
 	glBindTexture(GL_TEXTURE_2D, tex);
 	gluQuadricTexture(qobj, true);
 	gluQuadricNormals(qobj, GL_SMOOTH);
-	gluSphere(qobj, 100, 100, 100);
+	gluSphere(qobj, 900, 900, 900);
 	gluDeleteQuadric(qobj);
 	glPopMatrix();
 }
@@ -238,6 +249,7 @@ void Desert::LoadAssets()
 }
 void Desert::update(float deltaTime) {
 	player.update(deltaTime);
+	checkCollision();
 }
 void Desert::myKeyboard(unsigned char key, int x, int y) {
 	switch (key)

@@ -8,11 +8,13 @@ void Player::init(Vector3 pos, Vector3 s, int angle, char* m)
 void Player::display()
 {
 	car.render();
-	camera.setup(car.position, car.angle, car.front);
+	
 }
 void Player::update(float deltaTime)
 {
+	
 	car.update(deltaTime);
+	camera.setup(car.position, car.angle, car.front);
 }
 void Player::accelerate()
 {

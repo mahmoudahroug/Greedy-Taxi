@@ -11,7 +11,7 @@ class Car : public DynamicObject
 public:
 	float angularSpeed;
 	bool braking = false; 
-	void render();
+	/*void render();*/
 	void update(float deltaTime);
 	void accelerate();
 	void stopAcceleration();
@@ -21,7 +21,7 @@ public:
 	void turnRight();
 	void stopTurning();
 	void drawVectors();
-	void init(Vector3 pos, Vector3 s,int angle, char* m);
+	//void init(Vector3 pos, Vector3 s,int angle, char* m);
 	//Car(Vector3 pos, Vector3 s, Model_3DS* m) : angularSpeed(0) {
 	//	DynamicObject(pos, s, m);
 	//	maxSpeed = 5;

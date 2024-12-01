@@ -1,7 +1,7 @@
 #pragma once
 #include "Car.h"
 #include "Camera.h"
-class Player
+class Player : public DynamicObject
 {
 public:
 	Car car;

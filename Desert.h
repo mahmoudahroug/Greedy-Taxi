@@ -9,14 +9,17 @@
 #include <vector>
 #include <utility> // for std::pair
 #include "Player.h"
-
+#include "GameObject.h"
+#include "CollisionManager.h"
+#include "Vector3.h"
 class Desert
 {
 public:
 	// Store gas tank positions
-	std::vector<std::pair<int, int>> gasTankPositions;
+	std::vector<GameObject> gasTanks;
 	bool gasGenerated = false;
 	Player player;
+	CollisionManager collision;
 	// Model Variables
 	Model_3DS model_house;
 	Model_3DS model_tree;
@@ -49,5 +52,6 @@ private:
 	void renderGround();
 	void drawGasTank(int x, int y);
 	void drawGeneratedGasTanks();
+	void checkCollision();
 };
 
