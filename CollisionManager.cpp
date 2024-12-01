@@ -2,12 +2,14 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
-
+#include <iostream>
+//using namespace std;
 bool CollisionManager::checkCollisionAABB(GameObject& o1, GameObject& o2) {
 	Vector3 min1 = o1.getMin();
 	Vector3 max1 = o1.getMax();
 	Vector3 min2 = o2.getMin();
 	Vector3 max2 = o2.getMax();
+	
 	// use height for y if GameObjects won't have pitch
 	return (min1.x <= max2.x && max1.x >= min2.x) &&
 		(min1.y <= max2.y && max1.y >= min2.y) &&
@@ -15,6 +17,7 @@ bool CollisionManager::checkCollisionAABB(GameObject& o1, GameObject& o2) {
 }
 
 bool CollisionManager::checkCollisionOBB(GameObject& o1, GameObject& o2) {
+	
 	// Implementation for OBB collision detection
 	std::vector<Vector3> normals = { o1.front, o1.right, o2.front, o2.right };
 	std::vector<Vector3> vertices1 = o1.getVertices();

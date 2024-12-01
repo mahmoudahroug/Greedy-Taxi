@@ -2,17 +2,24 @@
 
 void Player::init(Vector3 pos, Vector3 s, int angle, char* m)
 {
+	position = pos;
+	car.position = pos;
+	speed = car.speed;
 	car.init(pos, s, angle, m);
 	camera.setup(car.position, car.angle, car.front);
 }
 void Player::display()
 {
 	car.render();
-	camera.setup(car.position, car.angle, car.front);
+	
 }
 void Player::update(float deltaTime)
 {
+	
 	car.update(deltaTime);
+	camera.setup(car.position, car.angle, car.front);
+	position = car.position;
+	speed = car.speed;
 }
 void Player::accelerate()
 {

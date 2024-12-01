@@ -13,6 +13,8 @@ public:
 	float angle;
 	float pitch;
 	float maxSide;
+	void GameObject::init(Vector3 pos, Vector3 s, int a, char* m);
+	void GameObject::render();
 	GameObject() {
 		position = Vector3(0, 0, 0);
 		size = Vector3(1, 1, 1);
@@ -51,6 +53,7 @@ public:
 
 		return vertices;
 	}
+
 	void renderBoundingBox();
 };
 

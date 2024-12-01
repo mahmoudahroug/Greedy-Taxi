@@ -4,13 +4,16 @@ void Desert::generateGas(int num) {
 	std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed random generator
 
 	for (int i = 0; i < num; i++) {
-		int x = 15 + (i * 5); // Random x position
-		int z = 4 + std::rand() % 8;            // Random z position
-		gasTankPositions.emplace_back(x, z);    // Store position
+		float x = 50 + (i * 50); // Random x position
+		float z = 4 + std::rand() % 8;// Random z position
+		GameObject g;
+		g.init(Vector3(x, 0, z), Vector3(0.5, 0.5, 0.5), 0, "models/fuel/gas.3DS");
+		gasTanks.emplace_back(g);    // Store position
 	}
 }
 void Desert::init() {
-	player.init(Vector3(-5, 0.1, 7.5), Vector3(1, 1, 1), 90, "models/car/xpander.3ds");
+	fuel = 100.0f;
+	player.init(Vector3(-5, 0.1, 7.5), Vector3(0.02, 0.02, -0.02), 90, "models/car/xpander.3ds");
 	generateGas(25);
 	Camera::instance = &player.camera;
 }
@@ -26,13 +29,13 @@ void Desert::renderGround()
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);	// Set quad normal direction.
 	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-	glVertex3f(-200, 0, -200);
+	glVertex3f(-1500, 0, -1500);
 	glTexCoord2f(5, 0);
-	glVertex3f(200, 0, -200);
+	glVertex3f(1500, 0, -1500);
 	glTexCoord2f(5, 5);
-	glVertex3f(200, 0, 200);
+	glVertex3f(1500, 0, 1500);
 	glTexCoord2f(0, 5);
-	glVertex3f(-200, 0, 200);
+	glVertex3f(-1500, 0, 1500);
 	glEnd();
 	glPopMatrix();
 
@@ -40,19 +43,94 @@ void Desert::renderGround()
 
 	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
 }
-void Desert::drawGasTank(int x, int z) {
-	glPushMatrix();
-	glTranslatef(x, 0, z);
-	glScalef(0.5, 0.5, 0.5);
-	model_fuel.Draw();
-	glPopMatrix();
-}
+
 
 void Desert::drawGeneratedGasTanks() {
-	for (const auto& pos : gasTankPositions) {
-		drawGasTank(pos.first, pos.second); // Use stored positions
+	for (auto& tank : gasTanks) {
+		tank.render();
 	}
 }
+void Desert::checkCollision() {
+	for (auto it = gasTanks.begin(); it != gasTanks.end(); ) {
+		if (collision.checkCollisionOBB(player, *it)) {
+			refuel(20.0f);
+			it = gasTanks.erase(it); // Remove collided gas tank and update iterator
+		}
+		else {
+			++it; // Only increment if no collision to avoid skipping elements
+		}
+	}
+}
+void Desert::checkCollisionBoundaries(float deltaTime) {
+	float lowerBoundary = 4.0f;
+	float upperBoundary = 11.0f;
+	float recoilSpeed = 10.0f;  // Speed of recoil
+
+	// Check if player is beyond the lower boundary
+	if (player.position.z < lowerBoundary) {
+		//std::cout << "Player passed the lower boundary at z: " << player.position.z << "\n";
+		player.car.velocity.z = recoilSpeed;  // Apply recoil in positive z-direction
+	}
+	// Check if player is beyond the upper boundary
+	else if (player.position.z > upperBoundary) {
+		//std::cout << "Player passed the upper boundary at z: " << player.position.z << "\n";
+		player.car.velocity.z = -recoilSpeed;  // Apply recoil in negative z-direction
+	}
+
+	// Apply smooth recoil to position using velocity
+	if (player.car.velocity.z != 0) {
+		player.car.position.z += player.car.velocity.z * deltaTime;
+
+		// Stop recoil when back within boundaries
+		if ((player.car.velocity.z > 0 && player.car.position.z >= lowerBoundary + 5.0f) ||
+			(player.car.velocity.z < 0 && player.car.position.z <= upperBoundary - 5.0f)) {
+			player.car.velocity.z = 0;  // Stop recoil
+			//std::cout << "Car stopped recoil at z: " << player.car.position.z << "\n";
+		}
+	}
+}
+
+
+void Desert::drawFuelBar() {
+	float fuelPercentage = fuel / 100.0f;  // Calculate fuel as a percentage
+
+	// Set the position and size of the fuel bar
+	float barWidth = 300.0f * fuelPercentage;  // Bar length based on fuel
+	float barHeight = 20.0f;
+	float screenPadding = 10.0f;  // Distance from the screen edge
+
+	// Switch to 2D orthographic projection
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	gluOrtho2D(0, viewport[2], 0, viewport[3]);  // Set orthographic projection to screen size
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Calculate position for the top-right corner
+	float barX = viewport[2] - barWidth - screenPadding;  // Right side with padding
+	float barY = viewport[3] - barHeight - screenPadding;  // Top side with padding
+
+	// Draw the background (empty bar)
+	glColor3f(0.5f, 0.5f, 0.5f);  // Gray color
+	glRectf(barX, barY, barX + 300.0f, barY + barHeight);
+
+	// Draw the fuel level (filled part)
+	glColor3f(0.0f, 1.0f, 0.0f);  // Green color for fuel
+	glRectf(barX, barY, barX + barWidth, barY + barHeight);
+
+	// Restore the previous matrix state
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);  // Reset to the model view matrix
+}
+
+
 void Desert::display() {
 
 	// Light setup
@@ -66,7 +144,7 @@ void Desert::display() {
 	renderGround();
 
 	// Infinite Road
-	for (float z = -200; z < 200; z += 2.0f) // Adjust spacing if needed
+	for (float z = -1500; z < 1500; z += 2.0f) // Adjust spacing if needed
 	{
 		glPushMatrix();
 		glTranslatef(z, -1, 10);
@@ -74,7 +152,7 @@ void Desert::display() {
 		model_road.Draw();
 		glPopMatrix();
 	}
-	for (float z = -200; z < 200; z += 2.0f) // Adjust spacing if needed
+	for (float z = -1500; z < 1500; z += 2.0f) // Adjust spacing if needed
 	{
 		glPushMatrix();
 		glTranslatef(z, -1, 5.6);
@@ -106,7 +184,7 @@ void Desert::display() {
 	glPopMatrix();
 
 	drawGeneratedGasTanks();
-
+	drawFuelBar();
 	// Draw Cactus
 	glPushMatrix();
 	for (int i = 0; i < 7; ++i) {
@@ -198,21 +276,24 @@ void Desert::display() {
 	// Reset color to white for subsequent objects
 	glColor3f(1, 1, 1);
 
-	//// Draw House
-	//glPushMatrix();
-	//glRotatef(90.f, 1, 0, 0);
-	//model_house.Draw();
-	//glPopMatrix();
+	// Draw House
+	glPushMatrix();
+	glTranslatef(25, 0, -15);
+	glRotatef(90.f, 1, 0, 0);
+	glRotatef(45.f, 0, 0, 1);
+	
+	model_house.Draw();
+	glPopMatrix();
 
 	//// Skybox (Sphere)
 	glPushMatrix();
 	GLUquadricObj* qobj = gluNewQuadric();
-	glTranslated(50, 0, 0);
+	glTranslated(800, 0, 0);
 	glRotated(90, 1, 0, 1);
 	glBindTexture(GL_TEXTURE_2D, tex);
 	gluQuadricTexture(qobj, true);
 	gluQuadricNormals(qobj, GL_SMOOTH);
-	gluSphere(qobj, 100, 100, 100);
+	gluSphere(qobj, 900, 900, 900);
 	gluDeleteQuadric(qobj);
 	glPopMatrix();
 }
@@ -238,6 +319,15 @@ void Desert::LoadAssets()
 }
 void Desert::update(float deltaTime) {
 	player.update(deltaTime);
+	checkCollision();
+	checkCollisionBoundaries(deltaTime);
+	
+	fuel -= player.speed * 0.3f * deltaTime;
+	if (fuel < 0) {
+		fuel = 0;
+		player.brake();
+	} // Ensure fuel doesn't go negative
+	
 }
 void Desert::myKeyboard(unsigned char key, int x, int y) {
 	switch (key)
