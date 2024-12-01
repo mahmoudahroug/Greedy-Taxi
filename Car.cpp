@@ -42,10 +42,12 @@ void Car::update(float deltaTime) {
 		angle -= 360;
 	}
 	float rad = angle * 3.14159f / 180.0f;
+	
 	rotate(rad);
+	if (collisionNormal != Vector3(0, 0, 0))
+		handleCollision();
 	velocity = front * speed;
 	position = position + velocity * deltaTime;
-	
 
 }
 
@@ -87,4 +89,19 @@ void Car::drawVectors() {
 
 	//glColor3f(0, 0, 1); // Blue
 	//drawVector(front.x, front.y, front.z);
+}
+void Car::handleCollision() {
+	// Reflect velocity vector off the collision normal
+	if (velocity == Vector3(0, 0, 0)) {
+		return;
+	}
+	Vector3 recoil = collisionNormal * velocity.dot(collisionNormal);
+	velocity = velocity - recoil + collisionNormal;
+	front = velocity.normalize();
+	right = front.cross(Vector3(0, 1, 0));
+	angle = atan2(front.x, front.z) * 180.0 / 3.141592f;
+	collisionNormal = Vector3(0, 0, 0);
+}
+void Car::setCollisionNormal(Vector3 normal) {
+	collisionNormal = normal;
 }

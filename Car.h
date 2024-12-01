@@ -9,9 +9,10 @@
 class Car : public DynamicObject
 {
 public:
+	
 	float angularSpeed;
 	bool braking = false; 
-	/*void render();*/
+
 	void update(float deltaTime);
 	void accelerate();
 	void stopAcceleration();
@@ -21,6 +22,7 @@ public:
 	void turnRight();
 	void stopTurning();
 	void drawVectors();
+	void setCollisionNormal(Vector3 normal);
 	//void init(Vector3 pos, Vector3 s,int angle, char* m);
 	//Car(Vector3 pos, Vector3 s, Model_3DS* m) : angularSpeed(0) {
 	//	DynamicObject(pos, s, m);
@@ -29,21 +31,12 @@ public:
 	//}
 	Car():angularSpeed(0){
 		maxSpeed = 100;
+		collisionNormal = Vector3(0, 0, 0);
 		/*size = Vector3(2, 2, 5);*/
 	}
 private:
-	void rotate(float rad) {
-		float cosA = cos(rad);
-		float sinA = sin(rad);
-		//float newX = front.x * cosA - front.z * sinA;
-		//float newZ = front.x * sinA + front.z * cosA;
-
-		// front -> (sinA, 0, cosA) (no y component / incline)
-		front = Vector3(sinA, front.y, cosA);
-		right = Vector3(front.z, front.y, -front.x);
-		// for incline
-		// cosB = cos (pitch); sinB = sin(pitch)
-		// front -> (cosB sinA, sinB , cosB cosA)
-	}
+	//bool collided = false;
+	Vector3 collisionNormal;
+	void handleCollision();
 };
 

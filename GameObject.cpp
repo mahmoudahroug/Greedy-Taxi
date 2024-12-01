@@ -13,7 +13,7 @@ void GameObject::init(Vector3 pos, Vector3 s, int a, char* m) {
 	position = pos;
 	size = s;
 	angle = a;
-
+	rotate(angle * 3.14159f / 180.0f);
 }
 void GameObject::render() {
 	//glPushMatrix();
@@ -34,4 +34,17 @@ void GameObject::render() {
 	model.Draw();
 	glPopMatrix();
 
+}
+void GameObject::rotate(float rad) {
+	float cosA = cos(rad);
+	float sinA = sin(rad);
+	//float newX = front.x * cosA - front.z * sinA;
+	//float newZ = front.x * sinA + front.z * cosA;
+
+	// front -> (sinA, 0, cosA) (no y component / incline)
+	front = Vector3(sinA, front.y, cosA);
+	right = Vector3(front.z, front.y, -front.x);
+	// for incline
+	// cosB = cos (pitch); sinB = sin(pitch)
+	// front -> (cosB sinA, sinB , cosB cosA)
 }

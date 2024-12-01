@@ -52,7 +52,7 @@ void Desert::drawGeneratedGasTanks() {
 }
 void Desert::checkCollision() {
 	for (auto it = gasTanks.begin(); it != gasTanks.end(); ) {
-		if (collision.checkCollisionOBB(player, *it)) {
+		if (collision.checkCollisionOBB(player.car, *it)) {
 			refuel(20.0f);
 			it = gasTanks.erase(it); // Remove collided gas tank and update iterator
 		}
@@ -69,12 +69,14 @@ void Desert::checkCollisionBoundaries(float deltaTime) {
 	// Check if player is beyond the lower boundary
 	if (player.position.z < lowerBoundary) {
 		//std::cout << "Player passed the lower boundary at z: " << player.position.z << "\n";
-		player.car.velocity.z = recoilSpeed;  // Apply recoil in positive z-direction
+		//player.car.velocity.z = recoilSpeed;  // Apply recoil in positive z-direction
+		player.setCollisionNormal(Vector3(0, 0, 1));  // Handle collision with the boundary
 	}
 	// Check if player is beyond the upper boundary
 	else if (player.position.z > upperBoundary) {
 		//std::cout << "Player passed the upper boundary at z: " << player.position.z << "\n";
-		player.car.velocity.z = -recoilSpeed;  // Apply recoil in negative z-direction
+		//player.car.velocity.z = -recoilSpeed;  // Apply recoil in negative z-direction
+		player.setCollisionNormal(Vector3(0, 0, -1));  // Handle collision with the boundary
 	}
 
 	// Apply smooth recoil to position using velocity
@@ -318,9 +320,9 @@ void Desert::LoadAssets()
 	loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
 }
 void Desert::update(float deltaTime) {
-	player.update(deltaTime);
 	checkCollision();
 	checkCollisionBoundaries(deltaTime);
+	player.update(deltaTime);
 	
 	fuel -= player.speed * 0.3f * deltaTime;
 	if (fuel < 0) {

@@ -66,3 +66,7 @@ void Player::handleMouseMotion(int x, int y)
 {
 	camera.handleMouseMotion(x, y);
 }
+void Player::setCollisionNormal(Vector3 normal)
+{
+	car.setCollisionNormal(normal);
+}

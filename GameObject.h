@@ -55,5 +55,7 @@ public:
 	}
 
 	void renderBoundingBox();
+protected:
+	void rotate(float rad);
 };
 

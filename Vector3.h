@@ -41,5 +41,10 @@ struct Vector3 {
     float dot(const Vector3& other) const {
         return x * other.x + y * other.y + z * other.z;
     }
-
+	bool operator==(const Vector3& other) const {
+		return x == other.x && y == other.y && z == other.z;
+	}
+	bool operator!=(const Vector3& other) const {
+		return x != other.x || y != other.y || z != other.z;
+	}
 };

@@ -17,6 +17,7 @@ public:
 	void turnLeft();
 	void turnRight();
 	void stopTurning();
+	void setCollisionNormal(Vector3 normal);
 	void firstPerson();
 	void thirdPerson();
 	void handleMouseButton(int button, int state, int x, int y);
