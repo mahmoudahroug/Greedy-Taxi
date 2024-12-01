@@ -18,6 +18,9 @@ public:
 	// Store gas tank positions
 	std::vector<GameObject> gasTanks;
 	bool gasGenerated = false;
+	float fuel;  // Fuel level
+
+
 	Player player;
 	CollisionManager collision;
 	// Model Variables
@@ -42,6 +45,7 @@ public:
 	void LoadAssets();
 	void display();
 	void update(float deltaTime);
+	void refuel(float amount) { fuel = (((fuel + amount) < (100.0f)) ? (fuel + amount) : (100.0f)); }  // Increase fuel
 	void myKeyboard(unsigned char key, int x, int y);
 	void myMotion(int x, int y);
 	void myMouse(int button, int state, int x, int y);
@@ -50,8 +54,9 @@ public:
 private:
 	void generateGas(int num);
 	void renderGround();
-	void drawGasTank(int x, int y);
 	void drawGeneratedGasTanks();
 	void checkCollision();
+	void checkCollisionBoundaries(float deltaTime);
+	void drawFuelBar();
 };
 

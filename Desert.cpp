@@ -12,6 +12,7 @@ void Desert::generateGas(int num) {
 	}
 }
 void Desert::init() {
+	fuel = 100.0f;
 	player.init(Vector3(-5, 0.1, 7.5), Vector3(0.02, 0.02, -0.02), 90, "models/car/xpander.3ds");
 	generateGas(25);
 	Camera::instance = &player.camera;
@@ -42,13 +43,7 @@ void Desert::renderGround()
 
 	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
 }
-void Desert::drawGasTank(int x, int z) {
-	glPushMatrix();
-	glTranslatef(x, 0, z);
-	glScalef(0.5, 0.5, 0.5);
-	model_fuel.Draw();
-	glPopMatrix();
-}
+
 
 void Desert::drawGeneratedGasTanks() {
 	for (auto& tank : gasTanks) {
@@ -56,11 +51,86 @@ void Desert::drawGeneratedGasTanks() {
 	}
 }
 void Desert::checkCollision() {
-	
-	if (collision.checkCollisionOBB(player, gasTanks[0])) {
-		std::cout << "collided" << "\n";
+	for (auto it = gasTanks.begin(); it != gasTanks.end(); ) {
+		if (collision.checkCollisionOBB(player, *it)) {
+			refuel(20.0f);
+			it = gasTanks.erase(it); // Remove collided gas tank and update iterator
+		}
+		else {
+			++it; // Only increment if no collision to avoid skipping elements
+		}
 	}
 }
+void Desert::checkCollisionBoundaries(float deltaTime) {
+	float lowerBoundary = 4.0f;
+	float upperBoundary = 11.0f;
+	float recoilSpeed = 10.0f;  // Speed of recoil
+
+	// Check if player is beyond the lower boundary
+	if (player.position.z < lowerBoundary) {
+		//std::cout << "Player passed the lower boundary at z: " << player.position.z << "\n";
+		player.car.velocity.z = recoilSpeed;  // Apply recoil in positive z-direction
+	}
+	// Check if player is beyond the upper boundary
+	else if (player.position.z > upperBoundary) {
+		//std::cout << "Player passed the upper boundary at z: " << player.position.z << "\n";
+		player.car.velocity.z = -recoilSpeed;  // Apply recoil in negative z-direction
+	}
+
+	// Apply smooth recoil to position using velocity
+	if (player.car.velocity.z != 0) {
+		player.car.position.z += player.car.velocity.z * deltaTime;
+
+		// Stop recoil when back within boundaries
+		if ((player.car.velocity.z > 0 && player.car.position.z >= lowerBoundary + 5.0f) ||
+			(player.car.velocity.z < 0 && player.car.position.z <= upperBoundary - 5.0f)) {
+			player.car.velocity.z = 0;  // Stop recoil
+			//std::cout << "Car stopped recoil at z: " << player.car.position.z << "\n";
+		}
+	}
+}
+
+
+void Desert::drawFuelBar() {
+	float fuelPercentage = fuel / 100.0f;  // Calculate fuel as a percentage
+
+	// Set the position and size of the fuel bar
+	float barWidth = 300.0f * fuelPercentage;  // Bar length based on fuel
+	float barHeight = 20.0f;
+	float screenPadding = 10.0f;  // Distance from the screen edge
+
+	// Switch to 2D orthographic projection
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	gluOrtho2D(0, viewport[2], 0, viewport[3]);  // Set orthographic projection to screen size
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Calculate position for the top-right corner
+	float barX = viewport[2] - barWidth - screenPadding;  // Right side with padding
+	float barY = viewport[3] - barHeight - screenPadding;  // Top side with padding
+
+	// Draw the background (empty bar)
+	glColor3f(0.5f, 0.5f, 0.5f);  // Gray color
+	glRectf(barX, barY, barX + 300.0f, barY + barHeight);
+
+	// Draw the fuel level (filled part)
+	glColor3f(0.0f, 1.0f, 0.0f);  // Green color for fuel
+	glRectf(barX, barY, barX + barWidth, barY + barHeight);
+
+	// Restore the previous matrix state
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);  // Reset to the model view matrix
+}
+
+
 void Desert::display() {
 
 	// Light setup
@@ -114,7 +184,7 @@ void Desert::display() {
 	glPopMatrix();
 
 	drawGeneratedGasTanks();
-
+	drawFuelBar();
 	// Draw Cactus
 	glPushMatrix();
 	for (int i = 0; i < 7; ++i) {
@@ -250,6 +320,14 @@ void Desert::LoadAssets()
 void Desert::update(float deltaTime) {
 	player.update(deltaTime);
 	checkCollision();
+	checkCollisionBoundaries(deltaTime);
+	
+	fuel -= player.speed * 0.3f * deltaTime;
+	if (fuel < 0) {
+		fuel = 0;
+		player.brake();
+	} // Ensure fuel doesn't go negative
+	
 }
 void Desert::myKeyboard(unsigned char key, int x, int y) {
 	switch (key)

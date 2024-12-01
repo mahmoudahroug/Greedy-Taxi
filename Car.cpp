@@ -45,6 +45,7 @@ void Car::update(float deltaTime) {
 	rotate(rad);
 	velocity = front * speed;
 	position = position + velocity * deltaTime;
+	
 
 }
 
