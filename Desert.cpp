@@ -266,7 +266,6 @@ void Desert::myKeyboard(unsigned char key, int x, int y) {
 	default:
 		break;
 	}
-	glutPostRedisplay();
 }
 void Desert::myMotion(int x, int y) {
 	player.handleMouseMotion(x, y);

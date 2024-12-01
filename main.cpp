@@ -6,7 +6,6 @@
 #include <cstdlib>  // for rand() and srand()
 #include <ctime>  
 #include <vector>
-#include "Camera.h"
 #include "irrKlang.h"
 #include "Desert.h"
 using namespace irrklang;
@@ -231,6 +230,9 @@ void keyboardUp(unsigned char key, int x, int y) {
 //void playCollisionSound() {
 //	if (engine) engine->play2D(COLLISION_SOUND_PATH, false);
 //}
+void playHornSound() {
+	if (engine) engine->play2D("sounds/horn1.mp3", false);
+}
 //=======================================================================
 // Main Function
 //=======================================================================
