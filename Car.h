@@ -14,6 +14,7 @@ public:
 	bool braking = false; 
 
 	void update(float deltaTime);
+	void updateHeadlights();
 	void accelerate();
 	void stopAcceleration();
 	void reverse();
@@ -32,11 +33,14 @@ public:
 	Car():angularSpeed(0){
 		maxSpeed = 100;
 		collisionNormal = Vector3(0, 0, 0);
-		/*size = Vector3(2, 2, 5);*/
+		headlightOffsetLeft = Vector3(-0.5f, 0.0f, 1.0f);
+		headlightOffsetRight = Vector3(0.5f, 0.0f, 1.0f);
 	}
 private:
 	//bool collided = false;
 	Vector3 collisionNormal;
 	void handleCollision();
+	Vector3 headlightOffsetLeft;
+	Vector3 headlightOffsetRight;
 };
 

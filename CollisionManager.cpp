@@ -46,7 +46,7 @@ bool CollisionManager::checkCollisionOBB(GameObject& o1, GameObject& o2) {
 	}
 	return true;
 }
-CollisionResult CollisionManager::checkCollisionOBB(GameObject& o1, GameObject& o2) {
+CollisionResult CollisionManager::checkCollision(GameObject& o1, GameObject& o2) {
 
 	// Implementation for OBB collision detection
 	std::vector<Vector3> normals = { o1.front, o1.right, o2.front, o2.right };
@@ -76,6 +76,7 @@ CollisionResult CollisionManager::checkCollisionOBB(GameObject& o1, GameObject& 
 		}
 		if (max1 < min2 || max2 < min1)
 			return { false, Vector3() };
+
 		float overlap = max1 < max2? max1 : max2 - min1 > min2? min1 : min2;
 		if (overlap < smallestOverlap) {
 			smallestOverlap = overlap;

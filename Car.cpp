@@ -41,11 +41,14 @@ void Car::update(float deltaTime) {
 	if (angle > 360) {
 		angle -= 360;
 	}
+	updateHeadlights();
+
 	float rad = angle * 3.14159f / 180.0f;
-	
 	rotate(rad);
+
 	if (collisionNormal != Vector3(0, 0, 0))
 		handleCollision();
+
 	velocity = front * speed;
 	position = position + velocity * deltaTime;
 
@@ -104,4 +107,33 @@ void Car::handleCollision() {
 }
 void Car::setCollisionNormal(Vector3 normal) {
 	collisionNormal = normal;
+}
+void Car::updateHeadlights() {
+	// Calculate world positions for the headlights based on the car's position and orientation
+	Vector3 headlightPositionLeft = position + (front * headlightOffsetLeft.z) + (right * headlightOffsetLeft.x);
+	Vector3 headlightPositionRight = position + (front * headlightOffsetRight.z) + (right * headlightOffsetRight.x);
+
+	// Set up OpenGL light sources
+	GLfloat lightPositionLeft[] = { headlightPositionLeft.x, headlightPositionLeft.y, headlightPositionLeft.z, 1.0f };
+	GLfloat lightPositionRight[] = { headlightPositionRight.x, headlightPositionRight.y, headlightPositionRight.z, 1.0f };
+
+	// Activate and configure lights
+	glEnable(GL_LIGHT2);
+	glLightfv(GL_LIGHT2, GL_POSITION, lightPositionLeft);
+
+	glEnable(GL_LIGHT1);
+	glLightfv(GL_LIGHT1, GL_POSITION, lightPositionRight);
+
+	// Optionally set light properties (e.g., spotlight effect)
+	GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };  // White light
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, lightDiffuse);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
+
+	GLfloat lightDirection[] = { front.x, front.y, front.z };
+	glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, lightDirection);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lightDirection);
+
+	GLfloat cutoffAngle = 30.0f;  // Spotlight angle
+	glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, cutoffAngle);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, cutoffAngle);
 }
