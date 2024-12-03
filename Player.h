@@ -7,7 +7,7 @@ public:
 	Car car;
 	Camera camera;
 
-	void init(Vector3 pos, Vector3 s, int angle, char* m);
+	void init(Vector3 pos, Vector3 s, Vector3 extraS, int angle, char* m);
 	void display();
 	void update(float deltaTime);
     void accelerate();

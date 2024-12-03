@@ -7,13 +7,13 @@ void Desert::generateGas(int num) {
 		float x = 50 + (i * 50); // Random x position
 		float z = 4 + std::rand() % 8;// Random z position
 		GameObject g;
-		g.init(Vector3(x, 0, z), Vector3(0.5, 0.5, 0.5), 0, "models/fuel/gas.3DS");
+		g.init(Vector3(x, 0, z), Vector3(1,1,1.2),Vector3(0.5, 0.5, 0.5), 0, "models/fuel/gas.3DS");
 		gasTanks.emplace_back(g);    // Store position
 	}
 }
 void Desert::init() {
 	fuel = 100.0f;
-	player.init(Vector3(-5, 0.1, 7.5), Vector3(0.02, 0.02, -0.02), 90, "models/car/xpander.3ds");
+	player.init(Vector3(-5, 0.1, 7.5), Vector3(1,1,2.3), Vector3(0.02, 0.02, -0.02), 90, "models/car/xpander.3ds");
 	generateGas(25);
 	Camera::instance = &player.camera;
 }

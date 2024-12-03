@@ -1,11 +1,9 @@
 #include "Player.h"
 
-void Player::init(Vector3 pos, Vector3 s, int angle, char* m)
+void Player::init(Vector3 pos, Vector3 s, Vector3 extraS, int angle, char* m)
 {
 	position = pos;
-	car.position = pos;
-	speed = car.speed;
-	car.init(pos, s, angle, m);
+	car.init(pos, s, extraS, angle, m);
 	camera.setup(car.position, car.angle, car.front);
 }
 void Player::display()
