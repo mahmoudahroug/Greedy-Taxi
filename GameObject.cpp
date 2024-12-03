@@ -41,7 +41,6 @@ void GameObject::render() {
 	//glScalef(0.02, 0.02, 0.02);
 	model.Draw();
 	glPopMatrix();
-	drawVertices(getVertices());
 
 }
 void GameObject::rotate(float rad) {
