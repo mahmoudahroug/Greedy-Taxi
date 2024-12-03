@@ -67,16 +67,12 @@ void Desert::checkCollisionBoundaries(float deltaTime) {
 	float recoilSpeed = 10.0f;  // Speed of recoil
 
 	// Check if player is beyond the lower boundary
-	if (player.position.z < lowerBoundary) {
-		//std::cout << "Player passed the lower boundary at z: " << player.position.z << "\n";
-		//player.car.velocity.z = recoilSpeed;  // Apply recoil in positive z-direction
-		player.setCollisionNormal(Vector3(0, 0, 1));  // Handle collision with the boundary
+	if (player.getPosition().z < lowerBoundary) {
+		player.setCollisionNormal(Vector3(0, 0, 1));
 	}
 	// Check if player is beyond the upper boundary
-	else if (player.position.z > upperBoundary) {
-		//std::cout << "Player passed the upper boundary at z: " << player.position.z << "\n";
-		//player.car.velocity.z = -recoilSpeed;  // Apply recoil in negative z-direction
-		player.setCollisionNormal(Vector3(0, 0, -1));  // Handle collision with the boundary
+	else if (player.getPosition().z > upperBoundary) {
+		player.setCollisionNormal(Vector3(0, 0, -1));
 	}
 
 	// Apply smooth recoil to position using velocity
@@ -324,7 +320,7 @@ void Desert::update(float deltaTime) {
 	checkCollisionBoundaries(deltaTime);
 	player.update(deltaTime);
 	
-	fuel -= player.speed * 0.3f * deltaTime;
+	fuel -= player.getSpeed() * 0.3f * deltaTime;
 	if (fuel < 0) {
 		fuel = 0;
 		player.brake();
