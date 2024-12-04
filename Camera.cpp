@@ -7,7 +7,7 @@ Camera::Camera()
     lastMouseX(0), lastMouseY(0), preset(false) {
 }
 
-void Camera::updateEyePosition(Vector3 position, float cameraYaw) {
+void Camera::updateEyePosition(Vector3 position, float cameraYaw, Vector3 front) {
     if (preset) {
 		cameraDistance = 1.0;
     }
@@ -17,11 +17,17 @@ void Camera::updateEyePosition(Vector3 position, float cameraYaw) {
     eye.x = position.x + cameraDistance * cos(cameraPitch) * sin(cameraYaw * M_PI / 180 +M_PI);
     eye.y = position.y + cameraDistance * sin(cameraPitch);
     eye.z = position.z + cameraDistance * cos(cameraPitch) * cos(cameraYaw * M_PI / 180 +M_PI);
+
+    if (preset) {
+        front = front * 1.5;
+        gluLookAt(eye.x + front.x, eye.y + front.y + 0.4, eye.z + front.z, position.x + front.x, position.y + front.y, position.z + front.z, 0, 1, 0);
+    }
+    else
+        gluLookAt(eye.x, eye.y, eye.z, position.x, position.y, position.z, 0, 1, 0);
     
 }
 
 void Camera::setup(Vector3 position, float cameraYaw, Vector3 front) {
-    updateEyePosition(position, cameraYaw);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -29,12 +35,7 @@ void Camera::setup(Vector3 position, float cameraYaw, Vector3 front) {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    if (preset) {
-		front = front * 1.5;
-        gluLookAt(eye.x + front.x, eye.y + front.y + 0.4, eye.z + front.z, position.x + front.x, position.y + front.y, position.z + front.z, 0, 1, 0);
-    }
-	else
-    gluLookAt(eye.x, eye.y, eye.z, position.x, position.y, position.z, 0, 1, 0);
+    updateEyePosition(position, cameraYaw, front);
 }
 
 void Camera::handleMouseMotion(int x, int y) {

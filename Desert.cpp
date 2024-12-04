@@ -99,7 +99,7 @@ void Desert::drawGeneratedObstacles() {
 }
 void Desert::checkCollision() {
 	for (auto it = gasTanks.begin(); it != gasTanks.end(); ) {
-		if (collision.checkCollisionOBB(player.car, *it)) {
+		if (collision.checkCollisionAABB(player.car, *it) && collision.checkCollisionOBB(player.car, *it)) {
 			playCollectibleSound();
 			refuel(20.0f);
 			it = gasTanks.erase(it); // Remove collided gas tank and update iterator
@@ -111,7 +111,7 @@ void Desert::checkCollision() {
 }
 void Desert::checkCollisionTreasure() {
 	
-	if (collision.checkCollisionOBB(player.car, treasure)) {
+	if (collision.checkCollisionAABB(player.car, treasure) && collision.checkCollisionOBB(player.car, treasure)) {
 		isCollected = true;
 		gameWon = true;
 	}
@@ -121,7 +121,7 @@ void Desert::checkCollisionTreasure() {
 }
 void Desert::checkCollisionObstacles() {
 	for (auto it = obstacles.begin(); it != obstacles.end(); ) {
-		if (collision.checkCollisionOBB(player.car, *it)) {
+		if (collision.checkCollisionAABB(player.car, *it) && collision.checkCollisionOBB(player.car, *it)) {
 			playCollisionSound();
 			it=obstacles.erase(it);
 		}
@@ -134,7 +134,6 @@ void Desert::checkCollisionObstacles() {
 void Desert::checkCollisionBoundaries(float deltaTime) {
 	float lowerBoundary = 4.0f;
 	float upperBoundary = 11.0f;
-	float recoilSpeed = 10.0f;  // Speed of recoil
 
 	// Check if player is beyond the lower boundary
 	if (player.getPosition().z < lowerBoundary) {
@@ -145,17 +144,17 @@ void Desert::checkCollisionBoundaries(float deltaTime) {
 		player.setCollisionNormal(Vector3(0, 0, -1));
 	}
 
-	// Apply smooth recoil to position using velocity
-	if (player.car.velocity.z != 0) {
-		player.car.position.z += player.car.velocity.z * deltaTime;
+	//// Apply smooth recoil to position using velocity
+	//if (player.car.velocity.z != 0) {
+	//	player.car.position.z += player.car.velocity.z * deltaTime;
 
-		// Stop recoil when back within boundaries
-		if ((player.car.velocity.z > 0 && player.car.position.z >= lowerBoundary + 5.0f) ||
-			(player.car.velocity.z < 0 && player.car.position.z <= upperBoundary - 5.0f)) {
-			player.car.velocity.z = 0;  // Stop recoil
-			//std::cout << "Car stopped recoil at z: " << player.car.position.z << "\n";
-		}
-	}
+	//	// Stop recoil when back within boundaries
+	//	if ((player.car.velocity.z > 0 && player.car.position.z >= lowerBoundary + 5.0f) ||
+	//		(player.car.velocity.z < 0 && player.car.position.z <= upperBoundary - 5.0f)) {
+	//		player.car.velocity.z = 0;  // Stop recoil
+	//		//std::cout << "Car stopped recoil at z: " << player.car.position.z << "\n";
+	//	}
+	//}
 }
 
 void Desert::displayGameEndScreen() {
@@ -448,7 +447,7 @@ void Desert::update(float deltaTime) {
 		playTreasureSound();
 		isCollected = false;
 	}
-	}
+}
 void Desert::myKeyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
