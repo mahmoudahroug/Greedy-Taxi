@@ -19,7 +19,7 @@ void Desert::init() {
 }
 void Desert::renderGround()
 {
-	glDisable(GL_LIGHTING);	// Disable lighting 
+	//glDisable(GL_LIGHTING);	// Disable lighting 
 
 	glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
 
@@ -39,7 +39,7 @@ void Desert::renderGround()
 	glEnd();
 	glPopMatrix();
 
-	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
+	//glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
 
 	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
 }
@@ -130,12 +130,6 @@ void Desert::drawFuelBar() {
 
 
 void Desert::display() {
-
-	// Light setup
-	GLfloat lightIntensity[] = { 0.7f, 0.7f, 0.7f, 1.0f };
-	GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 
 	player.display();
 	// Draw Ground
