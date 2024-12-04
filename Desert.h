@@ -12,14 +12,22 @@
 #include "GameObject.h"
 #include "CollisionManager.h"
 #include "Vector3.h"
+#include "irrKlang.h"
+
+using namespace irrklang;
+
+
 class Desert
 {
 public:
 	// Store gas tank positions
 	std::vector<GameObject> gasTanks;
+	std::vector<GameObject> obstacles;
 	bool gasGenerated = false;
 	float fuel;  // Fuel level
-
+	ISoundEngine* engine1 = nullptr;
+	GameObject treasure;
+	bool isCollected=false;
 
 	Player player;
 	CollisionManager collision;
@@ -53,10 +61,22 @@ public:
 	void keyboardUp(unsigned char key, int x, int y);
 private:
 	void generateGas(int num);
+	void generateObstacles(int num);
 	void renderGround();
 	void drawGeneratedGasTanks();
+	void drawGeneratedObstacles();
 	void checkCollision();
+	void checkCollisionObstacles();
+	void checkCollisionTreasure();
+	bool isGasTankAtPosition(float x, float z);
 	void checkCollisionBoundaries(float deltaTime);
 	void drawFuelBar();
+	void displayObstacles();
+
+	void playCollectibleSound();
+		
+	void playCollisionSound();
+	void playTreasureSound();
+	
 };
 
