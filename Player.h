@@ -1,7 +1,7 @@
 #pragma once
 #include "Car.h"
 #include "Camera.h"
-class Player : public DynamicObject
+class Player
 {
 public:
 	Car car;
@@ -9,6 +9,8 @@ public:
 
 	void init(Vector3 pos, Vector3 s, Vector3 extraS, int angle, char* m);
 	void display();
+	Vector3 getPosition() { return car.position; };
+	float getSpeed() { return car.speed; };
 	void update(float deltaTime);
     void accelerate();
 	void stopAcceleration();

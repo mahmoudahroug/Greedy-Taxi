@@ -1,13 +1,14 @@
 #include "TextureBuilder.h"
 #include "Model_3DS.h"
 #include "GLTexture.h"
-#include <glut.h>
 #include <iostream>
 #include <cstdlib>  // for rand() and srand()
 #include <ctime>  
 #include <vector>
+#include <glut.h>
 #include "irrKlang.h"
 #include "Desert.h"
+#include "Sun.h"
 using namespace irrklang;
 
 ISoundEngine* engine = nullptr;
@@ -18,6 +19,7 @@ int HEIGHT = 720;
 GLuint tex;
 char title[] = "Greedy Taxi";
 
+Sun sun(0.0f, 10.0f);
 GLTexture tex_ground;
 Desert desert;
 
@@ -126,14 +128,10 @@ void myDisplay(void)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//// Light setup
-	//GLfloat lightIntensity[] = { 0.7f, 0.7f, 0.7f, 1.0f };
-	//GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
-	//glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
-
 	//// Draw Ground
 	//RenderGround();
+	sun.applyLight();
+
 
 	desert.display();
 
@@ -164,8 +162,8 @@ void myMotion(int x, int y)
 {
 	desert.myMotion(x, y);
 
-	GLfloat light_position[] = { 0.0f, 10.0f, 0.0f, 1.0f };
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	//GLfloat light_position[] = { 0.0f, 10.0f, 0.0f, 1.0f };
+	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
 	glutPostRedisplay();	//Re-draw scene 
 }
@@ -215,6 +213,7 @@ void update()
 	float deltaTime = (currentTime - lastTime) / 1000;
 	lastTime = currentTime;
 
+	sun.update(deltaTime);           // Update the sun's position and properties
 	desert.update(deltaTime);
 
 	glutPostRedisplay();

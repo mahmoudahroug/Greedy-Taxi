@@ -46,7 +46,7 @@ void Desert::init() {
 }
 void Desert::renderGround()
 {
-	glDisable(GL_LIGHTING);	// Disable lighting 
+	//glDisable(GL_LIGHTING);	// Disable lighting 
 
 	glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
 
@@ -66,7 +66,7 @@ void Desert::renderGround()
 	glEnd();
 	glPopMatrix();
 
-	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
+	//glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
 
 	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
 }
@@ -131,16 +131,12 @@ void Desert::checkCollisionBoundaries(float deltaTime) {
 	float recoilSpeed = 10.0f;  // Speed of recoil
 
 	// Check if player is beyond the lower boundary
-	if (player.position.z < lowerBoundary) {
-		//std::cout << "Player passed the lower boundary at z: " << player.position.z << "\n";
-		//player.car.velocity.z = recoilSpeed;  // Apply recoil in positive z-direction
-		player.setCollisionNormal(Vector3(0, 0, 1));  // Handle collision with the boundary
+	if (player.getPosition().z < lowerBoundary) {
+		player.setCollisionNormal(Vector3(0, 0, 1));
 	}
 	// Check if player is beyond the upper boundary
-	else if (player.position.z > upperBoundary) {
-		//std::cout << "Player passed the upper boundary at z: " << player.position.z << "\n";
-		//player.car.velocity.z = -recoilSpeed;  // Apply recoil in negative z-direction
-		player.setCollisionNormal(Vector3(0, 0, -1));  // Handle collision with the boundary
+	else if (player.getPosition().z > upperBoundary) {
+		player.setCollisionNormal(Vector3(0, 0, -1));
 	}
 
 	// Apply smooth recoil to position using velocity
@@ -267,12 +263,8 @@ bool Desert::isGasTankAtPosition(float x, float z) {
 	return true;  // No gas tank at the given position
 }
 void Desert::display() {
-	
-	//// Light setup
-	//GLfloat lightIntensity[] = { 0.7f, 0.7f, 0.7f, 1.0f };
-	//GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
-	//glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+
+
 	if (gameWon || gameLost) {
 		displayGameEndScreen();
 	}
@@ -412,6 +404,7 @@ void Desert::display() {
 		glPopMatrix();
 	}
 }
+}
 void Desert::LoadAssets()
 {
 
@@ -439,7 +432,7 @@ void Desert::update(float deltaTime) {
 	checkCollisionTreasure();
 	player.update(deltaTime);
 	
-	fuel -= player.speed * 0.01f ;
+	fuel -= player.speed * 0.01f;
 	if (fuel < 0) {
 		fuel = 0;
 		player.brake();
