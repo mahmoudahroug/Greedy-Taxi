@@ -183,7 +183,7 @@ void Desert::displayGameEndScreen() {
 
 		std::string winText = "GAME WIN!";
 		glRasterPos2i(width / 2, height / 2);  // Adjust position for the text (top-center)
-
+		playWonSound();
 		// Render each character of the text
 		for (char c : winText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
@@ -194,7 +194,7 @@ void Desert::displayGameEndScreen() {
 
 		std::string loseText = "GAME LOSE!";
 		glRasterPos2i(width / 2, height / 2); // Adjust position for the text (top-center)
-
+		playLostSound();
 		// Render each character of the text
 		for (char c : loseText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
@@ -501,4 +501,8 @@ void Desert::playCollectibleSound() {
 	if (engine1) engine1->play2D("sounds/collision.mp3", false);
 }void Desert::playTreasureSound() {
 	if (engine1) engine1->play2D("sounds/treasure.mp3", false);
+}void Desert::playWonSound() {
+	if (engine1) engine1->play2D("sounds/won.mp3", false);
+}void Desert::playLostSound() {
+	if (engine1) engine1->play2D("sounds/lost.mp3", false);
 }

@@ -75,10 +75,12 @@ private:
 	void drawFuelBar();
 	void displayObstacles();
 	void displayGameEndScreen();
-	void playCollectibleSound();
-		
+	
+	void playCollectibleSound();	
 	void playCollisionSound();
 	void playTreasureSound();
+	void playWonSound();
+	void playLostSound();
 	
 };
 
