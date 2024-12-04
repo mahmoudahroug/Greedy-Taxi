@@ -14,7 +14,7 @@ void Desert::generateGas(int num) {
 			z = rand() % 4;
 		}
 		GameObject g;
-		g.init(Vector3(x, 0, zPos[z]), Vector3(1, 1, 1.2), Vector3(0.5, 0.5, 0.5), 0, "models/fuel/gas.3DS");
+		g.init(Vector3(x, 0, zPos[z]),   Vector3(1, 1, 1.2),  Vector3(0.5, 0.5, 0.5), 0, "models/fuel/gas.3DS");
 		gasTanks.emplace_back(g);    // Store position
 	}
 }
@@ -28,7 +28,7 @@ void Desert::generateObstacles(int num) {
 		// Select a random index for the first cactus
 		int index1 = rand() % 4;
 		GameObject g;
-		g.init(Vector3(x, 0.5, zPos[index1]), Vector3(0.1, 0.1, 0.1), 90, "models/cactus/cactus1.3ds");
+		g.init(Vector3(x, 0.5, zPos[index1]), Vector3(1, 0.3, 1.5), Vector3(0.1, 0.1, 0.1), 90, "models/cactus/cactus1.3ds");
 		obstacles.emplace_back(g);    
 	}
 }
@@ -80,11 +80,16 @@ void Desert::drawGeneratedGasTanks() {
 void Desert::drawGeneratedObstacles() {
 	for (auto& o : obstacles) {
 		
-		o.renderBoundingBox();
+		glPushMatrix();
+		glTranslatef(o.position.x, o.position.y + o.size.y / 2, o.position.z+0.7);
+		glScalef(o.size.x, o.size.y, o.size.z);
+		glutWireCube(1);
+		glPopMatrix();
+
 		glPushMatrix();
 		glTranslatef(o.position.x, o.position.y, o.position.z);
 		glRotatef(o.angle, 1, 0, 0);
-		glScalef(o.size.x, o.size.y, o.size.z);
+		glScalef(o.extraScaling.x, o.extraScaling.y, o.extraScaling.z);
 		glColor3f(0.4f, 0.5f, 0.1f);
 		o.model.Draw();
 		glPopMatrix();
@@ -118,13 +123,14 @@ void Desert::checkCollisionObstacles() {
 	for (auto it = obstacles.begin(); it != obstacles.end(); ) {
 		if (collision.checkCollisionAABB(player.car, *it)) {
 			playCollisionSound();
-			it = obstacles.erase(it);
+			it=obstacles.erase(it);
 		}
 		else {
 			++it; // Only increment if no collision to avoid skipping elements
 		}
 	}
 }
+
 void Desert::checkCollisionBoundaries(float deltaTime) {
 	float lowerBoundary = 4.0f;
 	float upperBoundary = 11.0f;
@@ -404,7 +410,7 @@ void Desert::display() {
 		glPopMatrix();
 	}
 }
-}
+
 void Desert::LoadAssets()
 {
 
@@ -428,11 +434,11 @@ void Desert::LoadAssets()
 void Desert::update(float deltaTime) {
 	checkCollision();
 	checkCollisionBoundaries(deltaTime);
-	checkCollisionObstacles();
+	checkCollisionObstacles();  // Check for collisions in every frame
 	checkCollisionTreasure();
 	player.update(deltaTime);
 	
-	fuel -= player.speed * 0.01f;
+	fuel -= player.getSpeed() * 0.01f;
 	if (fuel < 0) {
 		fuel = 0;
 		player.brake();

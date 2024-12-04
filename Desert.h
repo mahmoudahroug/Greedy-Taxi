@@ -75,7 +75,6 @@ private:
 	void drawFuelBar();
 	void displayObstacles();
 	void displayGameEndScreen();
-	
 	void playCollectibleSound();	
 	void playCollisionSound();
 	void playTreasureSound();
