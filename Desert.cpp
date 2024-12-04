@@ -81,13 +81,13 @@ void Desert::drawGeneratedObstacles() {
 	for (auto& o : obstacles) {
 		
 		glPushMatrix();
-		glTranslatef(o.position.x, o.position.y + o.size.y / 2, o.position.z+0.7);
+		glTranslatef(o.position.x, o.position.y + o.size.y / 2, o.position.z);
 		glScalef(o.size.x, o.size.y, o.size.z);
 		glutWireCube(1);
 		glPopMatrix();
 
 		glPushMatrix();
-		glTranslatef(o.position.x, o.position.y, o.position.z);
+		glTranslatef(o.position.x, o.position.y, o.position.z - 0.7);
 		glRotatef(o.angle, 1, 0, 0);
 		glScalef(o.extraScaling.x, o.extraScaling.y, o.extraScaling.z);
 		glColor3f(0.4f, 0.5f, 0.1f);
@@ -99,7 +99,7 @@ void Desert::drawGeneratedObstacles() {
 }
 void Desert::checkCollision() {
 	for (auto it = gasTanks.begin(); it != gasTanks.end(); ) {
-		if (collision.checkCollisionAABB(player.car, *it)) {
+		if (collision.checkCollisionOBB(player.car, *it)) {
 			playCollectibleSound();
 			refuel(20.0f);
 			it = gasTanks.erase(it); // Remove collided gas tank and update iterator
@@ -111,7 +111,7 @@ void Desert::checkCollision() {
 }
 void Desert::checkCollisionTreasure() {
 	
-	if (collision.checkCollisionAABB(player.car, treasure)) {
+	if (collision.checkCollisionOBB(player.car, treasure)) {
 		isCollected = true;
 		gameWon = true;
 	}
@@ -121,7 +121,7 @@ void Desert::checkCollisionTreasure() {
 }
 void Desert::checkCollisionObstacles() {
 	for (auto it = obstacles.begin(); it != obstacles.end(); ) {
-		if (collision.checkCollisionAABB(player.car, *it)) {
+		if (collision.checkCollisionOBB(player.car, *it)) {
 			playCollisionSound();
 			it=obstacles.erase(it);
 		}
