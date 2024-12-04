@@ -14,7 +14,7 @@ void Desert::generateGas(int num) {
 			z = rand() % 4;
 		}
 		GameObject g;
-		g.init(Vector3(x, 0, z), Vector3(1, 1, 1.2),Vector3(0.5, 0.5, 0.5), 0, "models/fuel/gas.3DS");
+		g.init(Vector3(x, 0, zPos[z]), Vector3(1, 1, 1.2), Vector3(0.5, 0.5, 0.5), 0, "models/fuel/gas.3DS");
 		gasTanks.emplace_back(g);    // Store position
 	}
 }
@@ -268,11 +268,11 @@ bool Desert::isGasTankAtPosition(float x, float z) {
 }
 void Desert::display() {
 	
-	// Light setup
-	GLfloat lightIntensity[] = { 0.7f, 0.7f, 0.7f, 1.0f };
-	GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+	//// Light setup
+	//GLfloat lightIntensity[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+	//GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
+	//glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	//glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 	if (gameWon || gameLost) {
 		displayGameEndScreen();
 	}
