@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "Model_3DS.h"
 #include <vector>
+#include <iostream>
 class GameObject
 {
 public:
@@ -16,6 +17,7 @@ public:
 	float maxSide;
 	void init(Vector3 pos, Vector3 s, int a, char* m);
 	void init(Vector3 pos, Vector3 s, Vector3 extraS, int a, char* m);
+	
 	void render();
 	GameObject() {
 		position = Vector3(0, 0, 0);
