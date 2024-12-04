@@ -106,8 +106,11 @@ void Desert::checkCollision() {
 }
 void Desert::checkCollisionTreasure() {
 	
-	if (collision.checkCollisionAABB(player.car, treasure))
+	if (collision.checkCollisionAABB(player.car, treasure)) {
 		isCollected = true;
+		gameWon = true;
+	}
+		
 			
 	
 }
@@ -153,7 +156,59 @@ void Desert::checkCollisionBoundaries(float deltaTime) {
 	}
 }
 
+void Desert::displayGameEndScreen() {
+	int width = 1280;
+	int height = 720;
+	// Set the background to black
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear color and depth buffers
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // Set background color to black
 
+	// Switch to orthographic projection for 2D rendering (text rendering)
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, width, 0, height, -1, 1);  // Set up 2D orthographic projection
+
+	glMatrixMode(GL_MODELVIEW);  // Switch back to the modelview matrix
+
+	// Reset the modelview matrix to avoid transformation issues
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Set the text color to white
+	glColor3f(1.0f, 0.0f, 0.0f);
+
+	// Display "GAME WIN!" if the player wins
+	if (gameWon) {
+
+		std::string winText = "GAME WIN!";
+		glRasterPos2i(width / 2, height / 2);  // Adjust position for the text (top-center)
+
+		// Render each character of the text
+		for (char c : winText) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
+		}
+	}
+	// Display "GAME LOSE!" if the player loses
+	else if (gameLost) {
+
+		std::string loseText = "GAME LOSE!";
+		glRasterPos2i(width / 2, height / 2); // Adjust position for the text (top-center)
+
+		// Render each character of the text
+		for (char c : loseText) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
+		}
+	}
+
+	// Pop the modelview matrix and projection matrix to restore the previous settings
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	// Ensure everything is rendered to the screen
+	glFlush();
+}
 void Desert::drawFuelBar() {
 	float fuelPercentage = fuel / 100.0f;  // Calculate fuel as a percentage
 
@@ -212,147 +267,150 @@ bool Desert::isGasTankAtPosition(float x, float z) {
 	return true;  // No gas tank at the given position
 }
 void Desert::display() {
-
+	
 	// Light setup
 	GLfloat lightIntensity[] = { 0.7f, 0.7f, 0.7f, 1.0f };
 	GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+	if (gameWon || gameLost) {
+		displayGameEndScreen();
+	}
+	else {
+		player.display();
+		// Draw Ground
+		renderGround();
 
-	player.display();
-	// Draw Ground
-	renderGround();
+
+		// Infinite Road
+		for (float z = -10; z < 1350; z += 2.0f) // Adjust spacing if needed
+		{
+			glPushMatrix();
+			glTranslatef(z, -1, 10);
+			glScalef(1, 1, 1);
+			model_road.Draw();
+			glPopMatrix();
+		}
+		for (float z = -10; z < 1350; z += 2.0f) // Adjust spacing if needed
+		{
+			glPushMatrix();
+			glTranslatef(z, -1, 5.6);
+			glScalef(1, 1, 1);
+			model_road.Draw();
+			glPopMatrix();
+		}
+
+		drawGeneratedGasTanks();
+		drawFuelBar();
+		drawGeneratedObstacles();
 
 
-	// Infinite Road
-	for (float z = -10; z < 1350; z += 2.0f) // Adjust spacing if needed
-	{
+		for (float z = 0; z < 1350; z += 75.0f) {
+			// Draw Bushes
+			glPushMatrix();
+			glTranslatef(5 + z, 0, 18);
+			glScalef(0.05, 0.05, 0.05);
+			glColor3f(0.3f, 0.3f, 0.1f);
+			model_bush.Draw();
+			glPopMatrix();
+
+			glPushMatrix();
+			glTranslatef(6 + z, 0, 19);
+			glScalef(0.05, 0.05, 0.05);
+			glColor3f(0.3f, 0.3f, 0.1f);
+			model_bush.Draw();
+			glPopMatrix();
+
+			glPushMatrix();
+			glTranslatef(12.5 + z, 0, 18);
+			glScalef(0.05, 0.05, 0.05);
+			glColor3f(0.3f, 0.3f, 0.1f);
+			model_bush.Draw();
+			glPopMatrix();
+
+			glPushMatrix();
+			glTranslatef(13.5 + z, 0, 19);
+			glScalef(0.05, 0.05, 0.05);
+			glColor3f(0.3f, 0.3f, 0.1f);
+			model_bush.Draw();
+			glPopMatrix();
+
+			// Draw Stones
+			glPushMatrix();
+			glTranslatef(7 + z, -1, 14);
+			glScalef(0.07, 0.07, 0.07);
+			glRotatef(90.f, 0, 1, 0);
+			glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f);
+			model_stone1.Draw();
+			glPopMatrix();
+
+			glPushMatrix();
+			glTranslatef(8 + z, -1, 16.5);
+			glScalef(0.06, 0.06, 0.06);
+			glRotatef(90.f, 0, 1, 0);
+			glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f);
+			model_stone1.Draw();
+			glPopMatrix();
+		}
+
+
+
 		glPushMatrix();
-		glTranslatef(z, -1, 10);
-		glScalef(1, 1, 1);
-		model_road.Draw();
+		glTranslatef(20, 7, -50);
+		glScalef(0.4, 0.4, 0.4);
+		model_mountain.Draw();
+		glPopMatrix();
+
+
+
+
+		glColor3f(1, 1, 1);
+		// Sandy Color for Rock
+		glPushMatrix();
+		glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f); // Sandy color
+		glRotated(90, 0, 1, 0);
+		glTranslatef(5, 1.5, 10);
+		glScalef(0.01, 0.01, 0.01);
+		model_rock.Draw();
+		glPopMatrix();
+
+		// Draw Cactus
+		glPushMatrix();
+		for (float z = 0; z < 1350; z += 5.0f) {
+			glPushMatrix();
+			glTranslatef(-5 + (z * 3), 0, 2);
+			glScalef(0.1, 0.1, 0.1);
+			glRotatef(90.f, 0, 1, 0);
+			glColor3f(0.4f, 0.5f, 0.1f);
+			model_cactus.Draw();
+			glPopMatrix();
+		}
+		glPopMatrix();
+
+		// Reset color to white for subsequent objects
+		glColor3f(1, 1, 1);
+
+		// Draw House
+		glPushMatrix();
+		glTranslatef(25, 0, -15);
+		glRotatef(90.f, 1, 0, 0);
+		glRotatef(45.f, 0, 0, 1);
+
+		model_house.Draw();
+		glPopMatrix();
+		treasure.render();
+		//// Skybox (Sphere)
+		glPushMatrix();
+		GLUquadricObj* qobj = gluNewQuadric();
+		glTranslated(800, 0, 0);
+		glRotated(90, 1, 0, 1);
+		glBindTexture(GL_TEXTURE_2D, tex);
+		gluQuadricTexture(qobj, true);
+		gluQuadricNormals(qobj, GL_SMOOTH);
+		gluSphere(qobj, 900, 900, 900);
+		gluDeleteQuadric(qobj);
 		glPopMatrix();
 	}
-	for (float z = -10; z < 1350; z += 2.0f) // Adjust spacing if needed
-	{
-		glPushMatrix();
-		glTranslatef(z, -1, 5.6);
-		glScalef(1, 1, 1);
-		model_road.Draw();
-		glPopMatrix();
-	}
-	
-	drawGeneratedGasTanks();
-	drawFuelBar();
-	drawGeneratedObstacles();
-
-
-	for (float z = 0; z < 1350; z += 75.0f) {
-		// Draw Bushes
-		glPushMatrix();
-		glTranslatef(5 + z, 0, 18);
-		glScalef(0.05, 0.05, 0.05);
-		glColor3f(0.3f, 0.3f, 0.1f);
-		model_bush.Draw();
-		glPopMatrix();
-
-		glPushMatrix();
-		glTranslatef(6 + z, 0, 19);
-		glScalef(0.05, 0.05, 0.05);
-		glColor3f(0.3f, 0.3f, 0.1f);
-		model_bush.Draw();
-		glPopMatrix();
-
-		glPushMatrix();
-		glTranslatef(12.5 + z, 0, 18);
-		glScalef(0.05, 0.05, 0.05);
-		glColor3f(0.3f, 0.3f, 0.1f);
-		model_bush.Draw();
-		glPopMatrix();
-
-		glPushMatrix();
-		glTranslatef(13.5 + z, 0, 19);
-		glScalef(0.05, 0.05, 0.05);
-		glColor3f(0.3f, 0.3f, 0.1f);
-		model_bush.Draw();
-		glPopMatrix();
-
-		// Draw Stones
-		glPushMatrix();
-		glTranslatef(7 + z, -1, 14);
-		glScalef(0.07, 0.07, 0.07);
-		glRotatef(90.f, 0, 1, 0);
-		glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f);
-		model_stone1.Draw();
-		glPopMatrix();
-
-		glPushMatrix();
-		glTranslatef(8 + z, -1, 16.5);
-		glScalef(0.06, 0.06, 0.06);
-		glRotatef(90.f, 0, 1, 0);
-		glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f);
-		model_stone1.Draw();
-		glPopMatrix();
-	}
-
-
-
-	glPushMatrix();
-	glTranslatef(20, 7, -50);
-	glScalef(0.4, 0.4, 0.4);
-	model_mountain.Draw();
-	glPopMatrix();
-
-
-
-
-	glColor3f(1, 1, 1);
-	// Sandy Color for Rock
-	glPushMatrix();
-	glColor3f(194 / 255.0f, 178 / 255.0f, 128 / 255.0f); // Sandy color
-	glRotated(90, 0, 1, 0);
-	glTranslatef(5, 1.5, 10);
-	glScalef(0.01, 0.01, 0.01);
-	model_rock.Draw();
-	glPopMatrix();
-
-	// Draw Cactus
-	glPushMatrix();
-	for (float z = 0; z < 1350; z += 5.0f){
-		glPushMatrix();
-		glTranslatef(-5 + (z * 3), 0, 2);
-		glScalef(0.1, 0.1, 0.1);
-		glRotatef(90.f, 0, 1, 0);
-		glColor3f(0.4f, 0.5f, 0.1f);
-		model_cactus.Draw();
-		glPopMatrix();
-	}
-	glPopMatrix();
-
-	// Reset color to white for subsequent objects
-	glColor3f(1, 1, 1);
-
-	// Draw House
-	glPushMatrix();
-	glTranslatef(25, 0, -15);
-	glRotatef(90.f, 1, 0, 0);
-	glRotatef(45.f, 0, 0, 1);
-	
-	model_house.Draw();
-	glPopMatrix();
-	treasure.render();
-	//// Skybox (Sphere)
-	glPushMatrix();
-	GLUquadricObj* qobj = gluNewQuadric();
-	glTranslated(800, 0, 0);
-	glRotated(90, 1, 0, 1);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	gluQuadricTexture(qobj, true);
-	gluQuadricNormals(qobj, GL_SMOOTH);
-	gluSphere(qobj, 900, 900, 900);
-	gluDeleteQuadric(qobj);
-	glPopMatrix();
-	
 }
 void Desert::LoadAssets()
 {
@@ -385,6 +443,7 @@ void Desert::update(float deltaTime) {
 	if (fuel < 0) {
 		fuel = 0;
 		player.brake();
+		gameLost = true;
 	} // Ensure fuel doesn't go negative
 	if (isCollected) {
 		playTreasureSound();

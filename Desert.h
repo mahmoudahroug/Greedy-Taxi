@@ -28,6 +28,8 @@ public:
 	ISoundEngine* engine1 = nullptr;
 	GameObject treasure;
 	bool isCollected=false;
+	bool gameWon = false;
+	bool gameLost = false;
 
 	Player player;
 	CollisionManager collision;
@@ -72,7 +74,7 @@ private:
 	void checkCollisionBoundaries(float deltaTime);
 	void drawFuelBar();
 	void displayObstacles();
-
+	void displayGameEndScreen();
 	void playCollectibleSound();
 		
 	void playCollisionSound();
