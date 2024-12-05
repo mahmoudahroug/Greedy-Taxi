@@ -23,6 +23,8 @@ Sun sun(0.0f, 10.0f);
 GLTexture tex_ground;
 Desert desert;
 
+Model_3DS model_city;
+
 //=======================================================================
 // Lighting Configuration Function
 //=======================================================================
@@ -134,6 +136,10 @@ void myDisplay(void)
 
 
 	desert.display();
+	//glPushMatrix();
+	//glScaled(0.1, 0.1, 0.1);
+	model_city.Draw();
+	//glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -202,6 +208,7 @@ void LoadAssets()
 
 	//// Loading Model files
 	desert.LoadAssets();
+	model_city.Load("models//city/city.3ds");
 	//tex_ground.Load("Textures/sand1.bmp");
 	//tex_road.Load("models/road/untitled.bmp");
 	//loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
