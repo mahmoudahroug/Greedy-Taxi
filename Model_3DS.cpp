@@ -296,7 +296,9 @@ void Model_3DS::CalculateBoundingBox() {
 				break;
 			}
 		}
-		if (ignore) continue;
+		if (ignore) {
+			continue;
+		}
 
 		Vector3 min = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };
 		Vector3 max = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };

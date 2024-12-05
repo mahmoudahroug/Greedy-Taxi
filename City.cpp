@@ -43,10 +43,15 @@ void City::checkCollisionObstacles() {
 		//cityObject.renderBoundingBox();
 		// Perform collision checks
 
-		bool aabbCollision = collision.checkCollisionAABB(player.car, cityObject);
-		bool obbCollision = collision.checkCollisionOBB(player.car, cityObject);
+		//bool aabbCollision = collision.checkCollisionAABB(player.car, cityObject);
+		//bool obbCollision = collision.checkCollisionOBB(player.car, cityObject);
 
-		if ((aabbCollision && obbCollision) && i!=366) {
+		if (collision.checkCollisionAABB(player.car, cityObject) && i!=366) {
+
+			CollisionResult obbCollision = collision.checkCollision(player.car, cityObject);
+			if (!obbCollision.isColliding) {
+				continue;
+			}
 			// Print details of the game object only when a collision occurs
 			std::cout << "Collision detected with object: " << model_city.Objects[i].name << '\n';
 			std::cout << "Object Bounding Box:\n";
@@ -62,6 +67,7 @@ void City::checkCollisionObstacles() {
 			std::cout << " Size: (" << player.car.size.x << ", "
 				<< player.car.size.y << ", " << player.car.size.z << ")\n";
 
+			player.setCollisionNormal(obbCollision.collisionNormal);
 			// Handle collision
 			playCollisionSound();
 			
