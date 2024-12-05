@@ -8,6 +8,7 @@
 #include <glut.h>
 #include "irrKlang.h"
 #include "Desert.h"
+#include "City.h"
 #include "Sun.h"
 using namespace irrklang;
 
@@ -16,12 +17,15 @@ void playHornSound();
 int WIDTH = 1280;
 int HEIGHT = 720;
 
+int level = 1;
+
 GLuint tex;
 char title[] = "Greedy Taxi";
 
 Sun sun(0.0f, 10.0f);
 GLTexture tex_ground;
 Desert desert;
+City city;
 
 Model_3DS model_city;
 
@@ -85,7 +89,12 @@ void myInit(void)
 	InitLightSource();
 
 	InitMaterial();
-	desert.init();
+
+	if (level == 1)
+		city.init();
+	else
+		desert.init();
+
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_NORMALIZE);
@@ -135,7 +144,10 @@ void myDisplay(void)
 	sun.applyLight();
 
 
-	desert.display();
+	if (level == 1)
+		city.display();
+	else
+		desert.display();
 	//glPushMatrix();
 	//glScaled(0.1, 0.1, 0.1);
 	model_city.Draw();
@@ -150,7 +162,11 @@ void myDisplay(void)
 //=======================================================================
 void myKeyboard(unsigned char key, int x, int y)
 {
-	desert.myKeyboard(key, x, y);
+	if (level == 1)
+		city.myKeyboard(key, x, y);
+	else
+		desert.myKeyboard(key, x, y);
+
 	switch (key) {
 	case 'h':
 		playHornSound();
@@ -166,7 +182,10 @@ void myKeyboard(unsigned char key, int x, int y)
 //=======================================================================
 void myMotion(int x, int y)
 {
-	desert.myMotion(x, y);
+	if (level == 1)
+		city.myMotion(x, y);
+	else
+		desert.myMotion(x, y);
 
 	//GLfloat light_position[] = { 0.0f, 10.0f, 0.0f, 1.0f };
 	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
@@ -179,7 +198,10 @@ void myMotion(int x, int y)
 //=======================================================================
 void myMouse(int button, int state, int x, int y)
 {
-	desert.myMouse(button, state, x, y);
+	if (level == 1)
+		city.myMouse(button, state, x, y);
+	else
+		desert.myMouse(button, state, x, y);
 }
 
 //=======================================================================
@@ -196,8 +218,10 @@ void myReshape(int w, int h)
 
 	// set the drawable region of the window
 	glViewport(0, 0, w, h);
-
-	desert.myReshape(w, h);
+	if (level == 1)
+		city.myReshape(w, h);
+	else
+		desert.myReshape(w, h);
 }
 
 //=======================================================================
@@ -207,8 +231,12 @@ void LoadAssets()
 {
 
 	//// Loading Model files
-	desert.LoadAssets();
-	model_city.Load("models//city/city.3ds");
+
+	if (level == 1)
+		city.LoadAssets();
+	else
+		desert.LoadAssets();
+	//model_city.Load("models//city/city.3ds");
 	//tex_ground.Load("Textures/sand1.bmp");
 	//tex_road.Load("models/road/untitled.bmp");
 	//loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
@@ -221,12 +249,18 @@ void update()
 	lastTime = currentTime;
 
 	sun.update(deltaTime);           // Update the sun's position and properties
-	desert.update(deltaTime);
+	if (level == 1)
+		city.update(deltaTime);
+	else
+		desert.update(deltaTime);
 
 	glutPostRedisplay();
 }
 void keyboardUp(unsigned char key, int x, int y) {
-	desert.keyboardUp(key, x, y);
+	if (level == 1)
+		city.keyboardUp(key, x, y);
+	else
+		desert.keyboardUp(key, x, y);
 }
 
 //void playAnimationSound() {
