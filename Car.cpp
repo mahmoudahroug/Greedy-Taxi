@@ -99,7 +99,7 @@ void Car::handleCollision() {
 		return;
 	}
 	Vector3 recoil = collisionNormal * velocity.dot(collisionNormal);
-	velocity = velocity - recoil + collisionNormal;
+	velocity = velocity - recoil * 1.1f + collisionNormal;
 	front = velocity.normalize();
 	right = front.cross(Vector3(0, 1, 0));
 	angle = atan2(front.x, front.z) * 180.0 / 3.141592f;
