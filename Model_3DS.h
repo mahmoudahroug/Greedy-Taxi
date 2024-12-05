@@ -88,13 +88,13 @@ class Model_3DS
 {
 public:
 
-	// A VERY simple vector struct
-	// I could have included a complex class but I wanted the model class to stand alone
-	struct Vector {
-		float x;
-		float y;
-		float z;
-	};
+	//// A VERY simple vector struct
+	//// I could have included a complex class but I wanted the model class to stand alone
+	//struct Vector {
+	//	float x;
+	//	float y;
+	//	float z;
+	//};
 
 	// Vertex struct to make code easier to read in places
 	struct Vertex {
@@ -146,8 +146,8 @@ public:
 		int numTexCoords;			// The number of vertices
 		bool textured;				// True: the object has textures
 		MaterialFaces *MatFaces;	// The faces are divided by materials
-		Vector pos;					// The position to move the object to
-		Vector rot;					// The angles to rotate the object
+		Vector3 pos;					// The position to move the object to
+		Vector3 rot;					// The angles to rotate the object
 		GameObject* boundingBox;		// Add bounding box data
 		Object()
 			: Vertexes(nullptr), Normals(nullptr), TexCoords(nullptr), Faces(nullptr),
@@ -166,8 +166,8 @@ public:
 	bool shownormals;		// True: show the normals
 	Material *Materials;	// The array of materials
 	Object *Objects;		// The array of objects in the model
-	Vector pos;				// The position to move the model to
-	Vector rot;				// The angles to rotate the model
+	Vector3 pos;				// The position to move the model to
+	Vector3 rot;				// The angles to rotate the model
 	float scale;			// The size you want the model scaled to
 	bool lit;				// True: the model is lit
 	bool visible;			// True: the model gets rendered

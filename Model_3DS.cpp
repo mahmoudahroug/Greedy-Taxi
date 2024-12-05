@@ -298,8 +298,8 @@ void Model_3DS::CalculateBoundingBox() {
 		}
 		if (ignore) continue;
 
-		Vector min = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };
-		Vector max = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };
+		Vector3 min = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };
+		Vector3 max = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };
 
 		for (int v = 0; v < currentObj.numVerts * 3; v += 3) {
 			min.x = std::fmin(min.x, currentObj.Vertexes[v]);
@@ -426,7 +426,7 @@ void Model_3DS::CalculateNormals()
 		{
 			// Reduce each vert's normal to unit
 			float length;
-			Vector unit;
+			Vector3 unit;
 
 			unit.x = Objects[i].Normals[g*3];
 			unit.y = Objects[i].Normals[g*3+1];
@@ -1039,7 +1039,7 @@ void Model_3DS::FacesDescriptionChunkProcessor(long length, long findex, int obj
 		Objects[objindex].Faces[i+2] = vertC;
 
 		// Calculate the face's normal
-		Vector n;
+		Vector3 n;
 		Vertex v1;
 		Vertex v2;
 		Vertex v3;
