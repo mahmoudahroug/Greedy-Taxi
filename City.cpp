@@ -40,7 +40,7 @@ void City::checkCollisionObstacles() {
 		}
 
 		GameObject& cityObject = *model_city.Objects[i].boundingBox;
-		cityObject.renderBoundingBox();
+		//cityObject.renderBoundingBox();
 		// Perform collision checks
 
 		bool aabbCollision = collision.checkCollisionAABB(player.car, cityObject);

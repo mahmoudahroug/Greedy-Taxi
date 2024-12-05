@@ -82,6 +82,7 @@
 #include "GameObject.h"
 #include <math.h>			// Header file for the math library
 #include <gl\gl.h>			// Header file for the OpenGL32 library
+#include <string.h>
 
 // The chunk's id numbers
 #define MAIN3DS				0x4D4D
@@ -282,9 +283,20 @@ void Model_3DS::CalculateBoundingBox() {
 	for (int objIndex = 0; objIndex < numObjects; ++objIndex) {
 		Object& currentObj = Objects[objIndex];
 
+
 		if (currentObj.Vertexes == nullptr || currentObj.numVerts <= 0) {
 			continue;
 		}
+		const char exclude[] = "polySurface750";
+		int lenEx = 14;
+		bool ignore = true;
+		for (int i = 0; i < lenEx; i++) {
+			if (currentObj.name[i] != exclude[i]) {
+				ignore = false;
+				break;
+			}
+		}
+		if (ignore) continue;
 
 		Vector min = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };
 		Vector max = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };

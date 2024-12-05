@@ -11,6 +11,7 @@ public:
 	Vector3 extraScaling;
 	Vector3 front; // Front vector of object
 	Vector3 right; // Right vector of object
+	Vector3 up;
 	Model_3DS model; // 3D model of object
 	float angle;
 	float pitch;
@@ -26,6 +27,7 @@ public:
 		model = Model_3DS();
 		front = Vector3(0, 0, 1);
 		right = Vector3(1, 0, 0);
+		up = Vector3(0, 1, 0);
 		angle = 0;
 		pitch = 0;
 		maxSide = size.x > size.z ? size.x : size.z;
