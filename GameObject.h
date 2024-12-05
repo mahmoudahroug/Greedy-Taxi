@@ -41,10 +41,10 @@ public:
 	//	maxSide = size.x > size.z ? size.x : size.z;
 	//}
 	Vector3 getMin() {
-		return position - Vector3(maxSide, maxSide, maxSide) * 0.5;
+		return position - Vector3(maxSide, size.y, maxSide) * 0.5;
 	}
 	Vector3 getMax() {
-		return position + Vector3(maxSide, maxSide, maxSide) * 0.5;
+		return position + Vector3(maxSide, size.y, maxSide) * 0.5;
 	}
 	std::vector<Vector3> getVertices();
 

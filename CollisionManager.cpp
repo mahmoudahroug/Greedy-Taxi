@@ -86,3 +86,6 @@ CollisionResult CollisionManager::checkCollision(GameObject& o1, GameObject& o2)
 
 	return { true, collisionNormal };
 }
+CollisionResult checkCollision(GameObject& car, Model_3DS& model) {
+	return { false, Vector3() };
+}

@@ -7,6 +7,11 @@ void City::display() {
 	model_city.Draw();
 	glPopMatrix();
 	//model_taxi.Draw();
+	for (int i = 0; i < model_city.numObjects; ++i) {
+		if (model_city.Objects[i].boundingBox) {
+			model_city.Objects[i].boundingBox->renderBoundingBox();
+		}
+	}
 }
 
 void City::init() {
