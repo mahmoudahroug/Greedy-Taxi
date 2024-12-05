@@ -3,7 +3,7 @@
 void City::display() {
 	player.display();
 	glPushMatrix();
-	glScaled(0.4, 0.4, 0.4);
+	//glScaled(0.4, 0.4, 0.4);
 	model_city.Draw();
 	glPopMatrix();
 	//model_taxi.Draw();
@@ -22,7 +22,54 @@ void City::LoadAssets()
 {
 	// Loading Model files
 	model_city.Load("models/city/city.3ds");
+	model_city.CalculateBoundingBox();
 	//model_taxi.Load("models/city_taxi/Taxi.3ds");
+}
+
+void City::checkCollisionObstacles() {
+	// Iterate through objects in the Model_3DS
+	for (int i = 0; i < model_city.numObjects; ++i) {
+		// Check if the bounding box exists
+		if (!model_city.Objects[i].boundingBox) {
+			continue;
+		}
+
+		GameObject& cityObject = *model_city.Objects[i].boundingBox;
+		cityObject.renderBoundingBox();
+		// Perform collision checks
+
+		bool aabbCollision = collision.checkCollisionAABB(player.car, cityObject);
+		bool obbCollision = collision.checkCollisionOBB(player.car, cityObject);
+
+		if ((aabbCollision && obbCollision) && i!=366) {
+			// Print details of the game object only when a collision occurs
+			std::cout << "Collision detected with object: " << model_city.Objects[i].name << '\n';
+			std::cout << "Object Bounding Box:\n";
+			std::cout << " Position: (" << cityObject.position.x << ", "
+				<< cityObject.position.y << ", " << cityObject.position.z << ")\n";
+			std::cout << " Size: (" << cityObject.size.x << ", "
+				<< cityObject.size.y << ", " << cityObject.size.z << ")\n";
+
+			// Log player car information
+			std::cout << "Player Car Bounding Box:\n";
+			std::cout << " Position: (" << player.car.position.x << ", "
+				<< player.car.position.y << ", " << player.car.position.z << ")\n";
+			std::cout << " Size: (" << player.car.size.x << ", "
+				<< player.car.size.y << ", " << player.car.size.z << ")\n";
+
+			// Handle collision
+			playCollisionSound();
+			
+			return; // Exit after handling the collision
+		}
+	}
+}
+
+
+
+
+void City::playCollisionSound() {
+	if (engine1) engine1->play2D("sounds/collision.mp3", false);
 }
 
 void City::keyboardUp(unsigned char key, int x, int y) {
@@ -74,7 +121,7 @@ void City::myReshape(int w, int h) {
 }
 
 void City::update(float deltaTime) {
-
+	checkCollisionObstacles();
 	player.update(deltaTime);
 
 }

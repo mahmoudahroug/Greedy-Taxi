@@ -36,6 +36,8 @@ public:
 	void LoadAssets();
 	void display();
 	void update(float deltaTime);
+	void checkCollisionObstacles();
+	void playCollisionSound();
 	void myKeyboard(unsigned char key, int x, int y);
 	void myMotion(int x, int y);
 	void myMouse(int button, int state, int x, int y);
