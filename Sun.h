@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector3.h"
 #include <glut.h>
+#define ORBIT_RADIUS 100.0f
 
 class Sun
 {

@@ -42,7 +42,7 @@ void City::display() {
 	for (int i = 0; i < model_city.numObjects; ++i) {
 		if (model_city.Objects[i].boundingBox) {
 			model_city.Objects[i].boundingBox->renderBoundingBox();
-			model_city.Objects[i].boundingBox->renderNormals();
+			//model_city.Objects[i].boundingBox->renderNormals();
 		}
 	}
 }
