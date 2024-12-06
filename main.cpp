@@ -82,18 +82,15 @@ void InitMaterial()
 //=======================================================================
 // OpengGL Configuration Function
 //=======================================================================
-void myInit(void)
+void myInit()
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
 	InitLightSource();
 
 	InitMaterial();
-
-	if (level == 1)
-		city.init();
-	else
-		desert.init();
+	city.init();
+	desert.init();
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -107,7 +104,6 @@ void myInit(void)
 
 void myDisplay(void)
 {
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//// Draw Ground
@@ -203,14 +199,16 @@ void LoadAssets()
 
 	//// Loading Model files
 
-	if (level == 1)
-		city.LoadAssets();
-	else
-		desert.LoadAssets();
+	city.LoadAssets();
+	desert.LoadAssets();
 	//model_city.Load("models//city/city.3ds");
 	//tex_ground.Load("Textures/sand1.bmp");
 	//tex_road.Load("models/road/untitled.bmp");
 	//loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
+}
+void switchLevel(int value) {
+	level = 2;
+
 }
 void update()
 {
@@ -225,12 +223,11 @@ void update()
 	else
 		desert.update(deltaTime);
 
+	
 	if (city.checkGameWin() && level == 1) {
-		level = 2;
+		//level = 2;
 		//	//unload level 1 assets
-		LoadAssets();
-
-		myInit();
+		glutTimerFunc(500, switchLevel, 1);
 	}
 
 	glutPostRedisplay();
