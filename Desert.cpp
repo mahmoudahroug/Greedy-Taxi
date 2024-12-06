@@ -28,7 +28,7 @@ void Desert::generateObstacles(int num) {
 		// Select a random index for the first cactus
 		int index1 = rand() % 4;
 		GameObject g;
-		g.init(Vector3(x, 0.5, zPos[index1]), Vector3(1, 0.3, 1.5), Vector3(0.1, 0.1, 0.1), 90, "models/cactus/cactus1.3ds");
+		g.init(Vector3(x, 0.2, zPos[index1]), Vector3(1, 0.3, 1.5), Vector3(0.1, 0.1, 0.1), 90, "models/cactus/cactus1.3ds");
 		obstacles.emplace_back(g);    
 	}
 }
@@ -409,7 +409,10 @@ void Desert::display() {
 
 		model_house.Draw();
 		glPopMatrix();
-		
+		glPushMatrix();
+		glTranslatef(40, 0, -18);
+		model_tree.Draw();
+		glPopMatrix();
 		//// Skybox (Sphere)
 		glPushMatrix();
 		GLUquadricObj* qobj = gluNewQuadric();
@@ -452,6 +455,7 @@ void Desert::update(float deltaTime) {
 	player.update(deltaTime);
 	
 	fuel -= player.getSpeed() * 0.01f;
+	
 	if (fuel < 0) {
 		fuel = 0;
 		player.brake();

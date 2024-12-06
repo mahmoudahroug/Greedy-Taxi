@@ -163,7 +163,7 @@ void City::displayGameEndScreen() {
 	if (gameWon) {
 
 		glColor3f(0, 1, 0);
-		std::string winText = "GAME WIN! You Advance to the Next Level";
+		std::string winText = "Congratulations! You Advance to the Next Level";
 		glRasterPos2i(width / 2 - 150, height / 2);  // Adjust position for the text (top-center)
 		//playWonSound();
 		// Render each character of the text
@@ -346,7 +346,7 @@ void City::myReshape(int w, int h) {
 }
 
 void City::playWonSound() {
-	if (engine1) engine1->play2D("sounds/won.mp3", false);
+	if (engine1) engine1->play2D("sounds/congrats.mp3", false);
 }
 
 void City::playLostSound() {
