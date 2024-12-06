@@ -114,6 +114,53 @@ void City::checkCollisionCollectables() {
 	}
 }
 
+void City::checkCollisionBoundaries() {
+	//bounds for map
+	const float xMin = -385.165f;
+	const float xMax = 170.037f;
+	const float zMin = -224.158f;
+	const float zMax = 8.0f;
+
+	// Check if player is beyond the lower boundary
+	if (player.getPosition().z < zMin) {
+		player.setCollisionNormal(Vector3(0, 0, 1));
+		playCollisionSound();
+	}
+	// Check if player is beyond the upper boundary
+	if (player.getPosition().z > zMax) {
+		player.setCollisionNormal(Vector3(0, 0, -1));
+		playCollisionSound();
+
+	}
+
+	// Check if player is beyond the lower boundary
+	if (player.getPosition().x < xMin) {
+		player.setCollisionNormal(Vector3(1, 0, 0));
+		playCollisionSound();
+
+	}
+	// Check if player is beyond the upper boundary
+	if (player.getPosition().x > xMax) {
+		player.setCollisionNormal(Vector3(-1, 0, 0));
+		playCollisionSound();
+
+	}
+
+	
+
+	//// Apply smooth recoil to position using velocity
+	//if (player.car.velocity.z != 0) {
+	//	player.car.position.z += player.car.velocity.z * deltaTime;
+
+	//	// Stop recoil when back within boundaries
+	//	if ((player.car.velocity.z > 0 && player.car.position.z >= lowerBoundary + 5.0f) ||
+	//		(player.car.velocity.z < 0 && player.car.position.z <= upperBoundary - 5.0f)) {
+	//		player.car.velocity.z = 0;  // Stop recoil
+	//		//std::cout << "Car stopped recoil at z: " << player.car.position.z << "\n";
+	//	}
+	//}
+}
+
 void City::checkCollisionObstacles() {
 	// Iterate through objects in the Model_3DS
 	for (int i = 0; i < model_city.numObjects; ++i) {
@@ -222,6 +269,7 @@ void City::myReshape(int w, int h) {
 void City::update(float deltaTime) {
 	checkCollisionObstacles();
 	checkCollisionCollectables();
+	checkCollisionBoundaries();
 	player.update(deltaTime);
 
 	//std::cout << "pos: " << player.getPosition().x << ", " << player.getPosition().y << ", " << player.getPosition().z << "\n";

@@ -42,6 +42,7 @@ public:
 	void playCollectibleSound();
 	void checkCollisionCollectables();
 	void checkCollisionObstacles();
+	void checkCollisionBoundaries();
 	void playCollisionSound();
 	void myKeyboard(unsigned char key, int x, int y);
 	void myMotion(int x, int y);
