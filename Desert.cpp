@@ -84,11 +84,6 @@ void Desert::drawGeneratedGasTanks() {
 void Desert::drawGeneratedObstacles() {
 	for (auto& o : obstacles) {
 		
-		glPushMatrix();
-		glTranslatef(o.position.x, o.position.y + o.size.y / 2, o.position.z);
-		glScalef(o.size.x, o.size.y, o.size.z);
-		glutWireCube(1);
-		glPopMatrix();
 
 		glPushMatrix();
 		glTranslatef(o.position.x, o.position.y, o.position.z-0.7);
