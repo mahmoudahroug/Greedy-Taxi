@@ -279,7 +279,7 @@ void City::checkCollisionObstacles() {
 			// Handle collision
 			playCollisionSound();
 			
-			return; // Exit after handling the collision
+			//return; // Exit after handling the collision
 		}
 	}
 }

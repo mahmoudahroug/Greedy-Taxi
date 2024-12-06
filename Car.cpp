@@ -109,6 +109,7 @@ void Car::handleCollision() {
 }
 void Car::setCollisionNormal(Vector3 normal) {
 	collisionNormal = collisionNormal + normal;
+	collisionNormal.normalize();
 }
 void Car::updateHeadlights() {
 	// Calculate world positions for the headlights based on the car's position and orientation
