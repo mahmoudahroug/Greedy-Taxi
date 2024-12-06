@@ -41,8 +41,8 @@ void GameObject::render() {
 	//glScalef(5, 5, 5);
 	////model.render();
 	//glPopMatrix();
-	renderBoundingBox();
-	renderNormals();
+	/*renderBoundingBox();
+	renderNormals();*/
 	glPushMatrix();
 	glTranslatef(position.x, position.y, position.z);
 	glScalef(extraScaling.x, extraScaling.y, extraScaling.z);
@@ -62,7 +62,7 @@ void GameObject::renderColor() {
 	//glScalef(5, 5, 5);
 	////model.render();
 	//glPopMatrix();
-	renderBoundingBox();
+	//renderBoundingBox();
 	glPushMatrix();
 	glTranslatef(position.x, position.y, position.z);
 	glScalef(size.x, size.y, size.z);

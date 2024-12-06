@@ -88,12 +88,12 @@ void City::display() {
 
 		glPopMatrix();
 		//model_taxi.Draw();
-		for (int i = 0; i < model_city.numObjects; ++i) {
-			if (model_city.Objects[i].boundingBox) {
-				model_city.Objects[i].boundingBox->renderBoundingBox();
-				//model_city.Objects[i].boundingBox->renderNormals();
-			}
-		}
+		//for (int i = 0; i < model_city.numObjects; ++i) {
+		//	if (model_city.Objects[i].boundingBox) {
+		//		model_city.Objects[i].boundingBox->renderBoundingBox();
+		//		//model_city.Objects[i].boundingBox->renderNormals();
+		//	}
+		//}
 
 
 		// Display Game Score
