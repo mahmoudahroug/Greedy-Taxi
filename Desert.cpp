@@ -103,7 +103,7 @@ void Desert::drawGeneratedObstacles() {
 }
 void Desert::checkCollision() {
 	for (auto it = gasTanks.begin(); it != gasTanks.end(); ) {
-		if (collision.checkCollisionAABB(player.car, *it)) {
+		if (collision.checkCollisionAABB(player.car, *it) && collision.checkCollisionOBB(player.car, *it)) {
 			if (!(gameWon||gameLost))
 				playCollectibleSound();
 			if(!gameLost)
@@ -117,7 +117,7 @@ void Desert::checkCollision() {
 }
 void Desert::checkCollisionTreasure() {
 	
-	if (collision.checkCollisionAABB(player.car, treasure)) {
+	if (collision.checkCollisionAABB(player.car, treasure) && collision.checkCollisionOBB(player.car, treasure)) {
 		playTreasureSound();
 		isCollected = true;
 		gameWon = true;
@@ -129,7 +129,7 @@ void Desert::checkCollisionTreasure() {
 
 void Desert::checkCollisionObstacles() {
 	for (auto it = obstacles.begin(); it != obstacles.end(); ) {
-		if (collision.checkCollisionAABB(player.car, *it)) {
+		if (collision.checkCollisionAABB(player.car, *it)&& collision.checkCollisionOBB(player.car, *it)) {
 			if (!(gameWon || gameLost))
 				playCollisionSound();
 			fuel = fuel - 10;
