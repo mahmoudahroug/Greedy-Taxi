@@ -132,6 +132,7 @@ void Desert::checkCollisionObstacles() {
 		if (collision.checkCollisionAABB(player.car, *it)) {
 			if (!(gameWon || gameLost))
 				playCollisionSound();
+			fuel = fuel - 10;
 			it=obstacles.erase(it);
 		}
 		else {

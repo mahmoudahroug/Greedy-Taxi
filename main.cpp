@@ -138,7 +138,7 @@ void myDisplay(void)
 	desert.display();
 	//glPushMatrix();
 	//glScaled(0.1, 0.1, 0.1);
-	model_city.Draw();
+	//model_city.Draw();
 	//glPopMatrix();
 
 	glutSwapBuffers();
