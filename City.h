@@ -21,11 +21,11 @@ class City
 public:
 	std::vector<GameObject> obstacles;
 	ISoundEngine* engine1 = nullptr;
-	GameObject treasure;
+	GameObject cash;
 	bool isCollected = false;
 	bool gameWon = false;
 	bool gameLost = false;
-
+	std::vector<GameObject> cashBlocks;
 	Player player;
 	CollisionManager collision;
 	// Model Variables
@@ -34,8 +34,13 @@ public:
 	Model_3DS model_taxi;
 	void init();
 	void LoadAssets();
+	void generateCash(int num);
+	void drawGeneratedCashBlocks();
 	void display();
 	void update(float deltaTime);
+	bool canPlace(float x, float z);
+	void playCollectibleSound();
+	void checkCollisionCollectables();
 	void checkCollisionObstacles();
 	void playCollisionSound();
 	void myKeyboard(unsigned char key, int x, int y);
