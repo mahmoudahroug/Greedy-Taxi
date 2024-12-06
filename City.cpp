@@ -165,7 +165,7 @@ void City::displayGameEndScreen() {
 		glColor3f(0, 1, 0);
 		std::string winText = "GAME WIN! You Advance to the Next Level";
 		glRasterPos2i(width / 2 - 150, height / 2);  // Adjust position for the text (top-center)
-		playWonSound();
+		//playWonSound();
 		// Render each character of the text
 		for (char c : winText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
@@ -355,7 +355,9 @@ bool City::checkGameWin() {
 	return gameWon;
 }
 void City::update(float deltaTime) {
-
+	if (gameWon || gameLost) {
+		return;
+	}
 	lastSecondTime += deltaTime;
 
 	// Decrement timer every second
@@ -374,6 +376,8 @@ void City::update(float deltaTime) {
 	checkCollisionBoundaries();
 	if (collectedCash == 10) {
 		gameWon = true;
+		collectedCash++;
+		playWonSound();
 	}
 	if (gameTimer == 0 && collectedCash < 10) {
 		gameLost = true;

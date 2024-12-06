@@ -258,7 +258,6 @@ void update()
 	//	level = 2;
 	//	//unload level 1 assets
 	//	myInit();
-	}
 
 	glutPostRedisplay();
 }

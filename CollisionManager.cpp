@@ -83,6 +83,12 @@ CollisionResult CollisionManager::checkCollision(GameObject& o1, GameObject& o2)
 			collisionNormal = normal;
 		}
 	}
+	Vector3 direction = o1.position - o2.position;
+	float dot = direction.dot(collisionNormal);
+	if (dot < 0) {
+		collisionNormal = -collisionNormal;
+	}
+
 
 	return { true, collisionNormal };
 }
