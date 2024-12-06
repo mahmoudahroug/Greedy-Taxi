@@ -95,6 +95,7 @@ void myInit(void)
 	else
 		desert.init();
 
+
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_NORMALIZE);
@@ -224,9 +225,13 @@ void update()
 	else
 		desert.update(deltaTime);
 
-	if (city.checkGameWin() && level==1) level = 2;
-		//unload level 1 assets
-	//	myInit();
+	if (city.checkGameWin() && level == 1) {
+		level = 2;
+		//	//unload level 1 assets
+		LoadAssets();
+
+		myInit();
+	}
 
 	glutPostRedisplay();
 }
