@@ -85,6 +85,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Car.cpp" />
+    <ClCompile Include="Chaser.cpp" />
     <ClCompile Include="City.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Desert.cpp" />
@@ -102,6 +103,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Car.h" />
+    <ClInclude Include="Chaser.h" />
     <ClInclude Include="City.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Desert.h" />

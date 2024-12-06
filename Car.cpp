@@ -8,13 +8,13 @@ void Car::accelerate() {
 	
 }
 void Car::stopAcceleration() {
-	acceleration = 0;
+	acceleration = -FRICTION * speed;
 }
 void Car::reverse() {
 	acceleration = -ACCELERATION;
 }
 void Car::brake() {
-	acceleration = -BRAKE_FORCE;
+	acceleration = -BRAKE_FORCE - FRICTION * speed;
 }
 void Car::turnLeft() {
 	angularSpeed = ANGULAR_SPEED;

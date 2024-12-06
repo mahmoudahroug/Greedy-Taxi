@@ -2,6 +2,7 @@
 #define ACCELERATION 5
 #define BRAKE_FORCE 10
 #define ANGULAR_SPEED 5
+#define FRICTION 0.2
 #include <iostream>
 #include "Vector3.h"
 #include "DynamicObject.h"

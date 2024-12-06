@@ -12,6 +12,7 @@ public:
 	void display();
 	Vector3 getPosition() { return car.position; };
 	float getSpeed() { return car.speed; };
+	float getAngle() { return car.angle; };
 	void update(float deltaTime);
     void accelerate();
 	void stopAcceleration();
