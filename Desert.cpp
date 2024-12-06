@@ -37,7 +37,11 @@ void Desert::init() {
 	fuel = 100.0f;
 	player.init(Vector3(-5, 0.1, 7.5), Vector3(1, 1, 2.3), Vector3(0.02, 0.02, -0.02), 90, "models/car/xpander.3ds");
 	generateGas(25);
-	treasure.init(Vector3(1300, 0, 7.5), Vector3(1, 1, 1), 180, "models/chest/chest1.3ds");
+	
+	treasure.initcolor(Vector3(1300, 0, 7.5), Vector3(0.5, 0.5, 0.5),Vector3(101 / 255.0f, 67 / 255.0f, 33 / 255.0f), -90, "models/chest/chest.3ds");
+
+	
+
 	Camera::instance = &player.camera;
 	engine1 = createIrrKlangDevice();
 	if (!engine1) {
@@ -100,7 +104,8 @@ void Desert::drawGeneratedObstacles() {
 void Desert::checkCollision() {
 	for (auto it = gasTanks.begin(); it != gasTanks.end(); ) {
 		if (collision.checkCollisionAABB(player.car, *it)) {
-			playCollectibleSound();
+			if (!(gameWon||gameLost))
+				playCollectibleSound();
 			refuel(20.0f);
 			it = gasTanks.erase(it); // Remove collided gas tank and update iterator
 		}
@@ -112,17 +117,20 @@ void Desert::checkCollision() {
 void Desert::checkCollisionTreasure() {
 	
 	if (collision.checkCollisionAABB(player.car, treasure)) {
+		playTreasureSound();
 		isCollected = true;
 		gameWon = true;
+	}
 	}
 		
 			
 	
-}
+
 void Desert::checkCollisionObstacles() {
 	for (auto it = obstacles.begin(); it != obstacles.end(); ) {
 		if (collision.checkCollisionAABB(player.car, *it)) {
-			playCollisionSound();
+			if (!(gameWon || gameLost))
+				playCollisionSound();
 			it=obstacles.erase(it);
 		}
 		else {
@@ -181,22 +189,22 @@ void Desert::displayGameEndScreen() {
 	glColor3f(1.0f, 0.0f, 0.0f);
 
 	// Display "GAME WIN!" if the player wins
-	if (gameWon) {
+	if (isCollected&& player.getPosition().x>1350) {
 
 		std::string winText = "GAME WIN!";
 		glRasterPos2i(width / 2, height / 2);  // Adjust position for the text (top-center)
-		playWonSound();
+		//playWonSound();
 		// Render each character of the text
 		for (char c : winText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
 		}
 	}
 	// Display "GAME LOSE!" if the player loses
-	else if (gameLost) {
+	else if ((!isCollected && player.getPosition().x > 1350)||fuel<=0) {
 
 		std::string loseText = "GAME LOSE!";
 		glRasterPos2i(width / 2, height / 2); // Adjust position for the text (top-center)
-		playLostSound();
+		//playLostSound();
 		// Render each character of the text
 		for (char c : loseText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
@@ -271,7 +279,9 @@ bool Desert::isGasTankAtPosition(float x, float z) {
 void Desert::display() {
 
 
-	if (gameWon || gameLost) {
+	if (player.getPosition().x>1350 || fuel<=0) {
+	
+		
 		displayGameEndScreen();
 	}
 	else {
@@ -279,9 +289,9 @@ void Desert::display() {
 		// Draw Ground
 		renderGround();
 
-
+	
 		// Infinite Road
-		for (float z = -10; z < 1350; z += 2.0f) // Adjust spacing if needed
+		for (float z = -10; z < 1500; z += 2.0f) // Adjust spacing if needed
 		{
 			glPushMatrix();
 			glTranslatef(z, -1, 10);
@@ -289,7 +299,7 @@ void Desert::display() {
 			model_road.Draw();
 			glPopMatrix();
 		}
-		for (float z = -10; z < 1350; z += 2.0f) // Adjust spacing if needed
+		for (float z = -10; z < 1500; z += 2.0f) // Adjust spacing if needed
 		{
 			glPushMatrix();
 			glTranslatef(z, -1, 5.6);
@@ -384,7 +394,7 @@ void Desert::display() {
 			glPopMatrix();
 		}
 		glPopMatrix();
-
+		treasure.renderColor();
 		// Reset color to white for subsequent objects
 		glColor3f(1, 1, 1);
 
@@ -396,7 +406,7 @@ void Desert::display() {
 
 		model_house.Draw();
 		glPopMatrix();
-		treasure.render();
+		
 		//// Skybox (Sphere)
 		glPushMatrix();
 		GLUquadricObj* qobj = gluNewQuadric();
@@ -443,10 +453,17 @@ void Desert::update(float deltaTime) {
 		fuel = 0;
 		player.brake();
 		gameLost = true;
+		
 	} // Ensure fuel doesn't go negative
-	if (isCollected) {
-		playTreasureSound();
-		isCollected = false;
+	if (player.getPosition().x > 1350 || fuel<=0) {
+		if (gameLost && !sound) {
+			playLostSound();
+			sound = true;
+		}
+		else if (gameWon && !sound) {
+			playWonSound();
+			sound = true;
+		}
 	}
 	}
 void Desert::myKeyboard(unsigned char key, int x, int y) {
