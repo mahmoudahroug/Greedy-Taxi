@@ -5,7 +5,7 @@ void Desert::generateGas(int num) {
 
 	for (int i = 0; i < num; i++) {
 		float x = 50 + (i * 50); // Random x position
-		float zPos[] = { 4.2, 9.3, 5.8, 7.5 };
+		float zPos[] = { 5.5, 9.3, 5.8, 7.7 };
 
 		// Select a random index for the first cactus
 		int z = rand() % 4;
