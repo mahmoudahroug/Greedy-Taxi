@@ -4,7 +4,7 @@ Camera::Camera()
     : eye(10, 5, 10),
     center(0,3.0,0),
     cameraYaw(0.0), cameraPitch(0.5), cameraDistance(5.0),
-    lastMouseX(0), lastMouseY(0), preset(false) {
+    lastMouseX(0), lastMouseY(0), preset(false),currentView(ThirdPerson) {
 }
 
 void Camera::updateEyePosition(Vector3 position, float cameraYaw) {
@@ -59,6 +59,9 @@ void Camera::handleMouseButton(int button, int state, int x, int y) {
 		//this->handleMouseMotion(x, y);
         glutMotionFunc([](int x, int y) { instance->handleMouseMotion(x, y); });
     }
+    else  if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+        toggleViewMode();
+    }
     else {
         glutMotionFunc(nullptr); // Unregister motion callback
     }
@@ -70,4 +73,14 @@ void Camera::carFirstPerson() {
 
 void Camera::carThirdPerson() {
     preset = false;
+}
+void Camera::toggleViewMode() {
+    if (currentView == FirstPerson) {
+        carThirdPerson();
+        currentView = ThirdPerson;
+    }
+    else {
+        carFirstPerson();
+        currentView = FirstPerson;
+    }
 }
