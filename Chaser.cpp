@@ -15,7 +15,9 @@ void Chaser::update(float deltaTime) {
 	Vector3 direction = chaseePos - car.position;
 	direction.normalize();
 	float angle = atan2(direction.x, direction.z) * 180 / 3.14159f;
-	car.speed = 20;
+
+	car.accelerate();
+
 	if (car.angle < angle)
 		car.turnLeft();
 	else if (car.angle > angle)

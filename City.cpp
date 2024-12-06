@@ -77,6 +77,7 @@ void City::display() {
 	}
 	else {
 		player.display();
+		chaser.display();
 
 		glPushMatrix();
 		//glScaled(0.4, 0.4, 0.4);
@@ -130,7 +131,7 @@ void City::display() {
 
 void City::init() {
 	player.init(Vector3(-1, 0.1, 1.5), Vector3(1, 1, 2.3), Vector3(0.2, 0.2, 0.2), 180, "models/city_taxi/Taxi.3ds");
-	//chaser.init(Vector3(200, 0.1, 0), Vector3(1, 1, 2.3), Vector3(0.2, 0.2, 0.2), 90, "models/city_taxi/Taxi.3ds");
+	chaser.init(Vector3(-248.88, 0.1, -18), Vector3(1, 1, 2.3), Vector3(0.2, 0.2, 0.2), 90, "models/city_taxi/Taxi.3ds", &player.car);
 	Camera::instance = &player.camera;
 
 	engine1 = createIrrKlangDevice();
@@ -296,11 +297,16 @@ void City::checkCollisionBoundaries() {
 
 void City::checkCollisionObstacles() {
 	// Iterate through objects in the Model_3DS
-
+	if (collision.checkCollisionAABB(player.car, chaser.car)) {
+		CollisionResult obbCollision = collision.checkCollision(player.car, chaser.car);
+		player.setCollisionNormal(obbCollision.collisionNormal);
+		playCollisionSound();
+	}
 	for (auto& trafficCar : trafficCars) {
 		if (collision.checkCollisionAABB(player.car, trafficCar)) {
 			CollisionResult obbCollision = collision.checkCollision(player.car, trafficCar);
 			player.setCollisionNormal(obbCollision.collisionNormal);
+			chaser.setCollisionNormal(-obbCollision.collisionNormal);
 			// Handle collision
 			playCollisionSound();
 		}
@@ -325,27 +331,24 @@ void City::checkCollisionObstacles() {
 			if (!obbCollision.isColliding) {
 				continue;
 			}
-			// Print details of the game object only when a collision occurs
-			//std::cout << "Collision detected with object: " << model_city.Objects[i].name << '\n';
-			//std::cout << "Object Bounding Box:\n";
-			//std::cout << " Position: (" << cityObject.position.x << ", "
-			//	<< cityObject.position.y << ", " << cityObject.position.z << ")\n";
-			//std::cout << " Size: (" << cityObject.size.x << ", "
-			//	<< cityObject.size.y << ", " << cityObject.size.z << ")\n";
-
-			//// Log player car information
-			//std::cout << "Player Car Bounding Box:\n";
-			//std::cout << " Position: (" << player.car.position.x << ", "
-			//	<< player.car.position.y << ", " << player.car.position.z << ")\n";
-			//std::cout << " Size: (" << player.car.size.x << ", "
-			//	<< player.car.size.y << ", " << player.car.size.z << ")\n";
-			//std::cout << " Collision Normal: (" << obbCollision.collisionNormal.x << ", "
-			//	<< obbCollision.collisionNormal.y << ", " << obbCollision.collisionNormal.z << ")\n";
 
 			player.setCollisionNormal(obbCollision.collisionNormal);
 			// Handle collision
 			playCollisionSound();
 			
+			//return; // Exit after handling the collision
+		}
+		if (collision.checkCollisionAABB(chaser.car, cityObject) && i != 366 && objectName.find("LM_Basketball") == std::string::npos) {
+
+			CollisionResult obbCollision = collision.checkCollision(chaser.car, cityObject);
+			if (!obbCollision.isColliding) {
+				continue;
+			}
+
+			chaser.setCollisionNormal(obbCollision.collisionNormal);
+			// Handle collision
+			playCollisionSound();
+
 			//return; // Exit after handling the collision
 		}
 	}
@@ -456,6 +459,7 @@ void City::update(float deltaTime) {
 		gameTimer--;
 	}
 	player.update(deltaTime);
+	chaser.update(deltaTime);
 
 	//std::cout << "pos: " << player.getPosition().x << ", " << player.getPosition().y << ", " << player.getPosition().z << "\n";
 }

@@ -60,6 +60,9 @@
     <ClCompile Include="City.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Chaser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTexture.h">
@@ -99,6 +102,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="City.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Chaser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
