@@ -87,6 +87,7 @@ void City::display() {
 
 void City::init() {
 	player.init(Vector3(-1, 0.1, 1.5), Vector3(1, 1, 2.3), Vector3(0.2, 0.2, 0.2), 180, "models/city_taxi/Taxi.3ds");
+	//chaser.init(Vector3(200, 0.1, 0), Vector3(1, 1, 2.3), Vector3(0.2, 0.2, 0.2), 90, "models/city_taxi/Taxi.3ds");
 	Camera::instance = &player.camera;
 
 	engine1 = createIrrKlangDevice();

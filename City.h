@@ -13,6 +13,7 @@
 #include "CollisionManager.h"
 #include "Vector3.h"
 #include "irrKlang.h"
+#include "Chaser.h"
 using namespace irrklang;
 
 
@@ -29,6 +30,7 @@ public:
 	bool gameLost = false;
 	std::vector<GameObject> cashBlocks;
 	Player player;
+	Chaser chaser;
 	CollisionManager collision;
 	// Model Variables
 	// Textures

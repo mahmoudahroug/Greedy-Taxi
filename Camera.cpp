@@ -50,7 +50,6 @@ void Camera::handleMouseMotion(int x, int y) {
 
     if (cameraPitch > 1.5) cameraPitch = 1.5; // Prevent flipping
     if (cameraPitch < -1.5) cameraPitch = -1.5;
-    std::cout << "Pitchinside: " << cameraPitch << "\n";
     lastMouseX = x;
     lastMouseY = y;
     glutPostRedisplay();  // Redraw the scene with the updated camera
