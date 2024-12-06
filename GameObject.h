@@ -11,13 +11,15 @@ public:
 	Vector3 extraScaling;
 	Vector3 front; // Front vector of object
 	Vector3 right; // Right vector of object
+	Vector3 color;
 	Model_3DS model; // 3D model of object
 	float angle;
 	float pitch;
 	float maxSide;
 	void init(Vector3 pos, Vector3 s, int a, char* m);
 	void init(Vector3 pos, Vector3 s, Vector3 extraS, int a, char* m);
-	
+	void initcolor(Vector3 pos, Vector3 s, Vector3 colorx, int a, char* m);
+	void renderColor();
 	void render();
 	GameObject() {
 		position = Vector3(0, 0, 0);
@@ -28,6 +30,7 @@ public:
 		right = Vector3(1, 0, 0);
 		angle = 0;
 		pitch = 0;
+		color = Vector3(0, 0, 0);
 		maxSide = size.x > size.z ? size.x : size.z;
 	}
 	//GameObject(Vector3 pos, Vector3 s, Model_3DS* m) {

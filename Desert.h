@@ -13,7 +13,8 @@
 #include "CollisionManager.h"
 #include "Vector3.h"
 #include "irrKlang.h"
-
+#include <thread> // Include the thread library
+#include <chrono>
 using namespace irrklang;
 
 
@@ -30,7 +31,7 @@ public:
 	bool isCollected=false;
 	bool gameWon = false;
 	bool gameLost = false;
-
+	bool sound = false;
 	Player player;
 	CollisionManager collision;
 	// Model Variables
