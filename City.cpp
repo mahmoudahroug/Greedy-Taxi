@@ -26,11 +26,50 @@ void City::generateCash(int num) {
 	}
 }
 
+void City::generateTraffic() {
+
+
+	GameObject trafficCar;
+	trafficCar.init(Vector3(-10.9313, 0.1, -70.7613), Vector3(10, 10, 10), Vector3(0.02, 0.02, 0.02), -90, "models/car/xpander.3ds");
+	trafficCars.emplace_back(trafficCar);
+	GameObject trafficCar2;
+	trafficCar2.init(Vector3(-10.9313, 0.1, -75.7613), Vector3(10, 10, 10), Vector3(0.02, 0.02, 0.02), -90, "models/car/xpander.3ds");
+	trafficCars.emplace_back(trafficCar2);
+	GameObject trafficCar3;
+	trafficCar3.init(Vector3(13.6765, 0.1, -67.6167), Vector3(10, 10, 10), Vector3(0.02, 0.02, 0.02), 90, "models/car/xpander.3ds");
+	trafficCars.emplace_back(trafficCar3);
+	GameObject trafficCar4;
+	trafficCar4.init(Vector3(13.7443, 0.1, -75.3448), Vector3(10, 10, 10), Vector3(0.02, 0.02, 0.02), 90, "models/car/xpander.3ds");
+	trafficCars.emplace_back(trafficCar4);
+
+	GameObject trafficCar5;
+	trafficCar5.init(Vector3(-202.075, 0.1, -74.6671), Vector3(10, 10, 10), Vector3(0.02, 0.02, 0.02), 90, "models/car/xpander.3ds");
+	trafficCars.emplace_back(trafficCar5);
+	GameObject trafficCar6;
+	trafficCar6.init(Vector3(-203.298, 0.1, -69.2581), Vector3(10, 10, 10), Vector3(0.02, 0.02, 0.02), 90, "models/car/xpander.3ds");
+	trafficCars.emplace_back(trafficCar6);
+
+	GameObject trafficCar7;
+	trafficCar7.init(Vector3(-246.845, 0.1, -75.7875), Vector3(10, 10, 10), Vector3(0.02, 0.02, 0.02), -90, "models/car/xpander.3ds");
+	trafficCars.emplace_back(trafficCar7);
+	GameObject trafficCar8;
+	trafficCar8.init(Vector3(-246.845, 0.1, -69.2581), Vector3(10, 10, 10), Vector3(0.02, 0.02, 0.02), -90, "models/car/xpander.3ds");
+	trafficCars.emplace_back(trafficCar8);
+
+
+}
+
 void City::drawGeneratedCashBlocks() {
 	for (auto& cash : cashBlocks) {
 		cash.render();
 	}
 }
+void City::drawGeneratedTraffic() {
+	for (auto& trafficCar : trafficCars) {
+		trafficCar.render();
+	}
+}
+
 
 void City::display() {
 	if (gameWon || gameLost) {
@@ -42,15 +81,19 @@ void City::display() {
 		glPushMatrix();
 		//glScaled(0.4, 0.4, 0.4);
 		model_city.Draw();
+
+		drawGeneratedTraffic();
+
 		drawGeneratedCashBlocks();
+
 		glPopMatrix();
 		//model_taxi.Draw();
-		for (int i = 0; i < model_city.numObjects; ++i) {
-			if (model_city.Objects[i].boundingBox) {
-				model_city.Objects[i].boundingBox->renderBoundingBox();
-				//model_city.Objects[i].boundingBox->renderNormals();
-			}
-		}
+		//for (int i = 0; i < model_city.numObjects; ++i) {
+		//	if (model_city.Objects[i].boundingBox) {
+		//		model_city.Objects[i].boundingBox->renderBoundingBox();
+		//		//model_city.Objects[i].boundingBox->renderNormals();
+		//	}
+		//}
 
 
 		// Display Game Score
@@ -106,6 +149,7 @@ void City::LoadAssets()
 
 
 	generateCash(100);
+	generateTraffic();
 
 	//model_taxi.Load("models/city_taxi/Taxi.3ds");
 }
@@ -114,6 +158,18 @@ void City::LoadAssets()
 bool City::canPlace(GameObject g) {
 	//numOnjects 0,when loaded first, gives nptr
 	//std::cout << "Testing placement at (" << x << ", " << z << "numObjects: " << model_city.numObjects << ")\n";
+	std::cout << "noOfModels: " << model_city.numObjects << std::endl;
+
+	for (auto& trafficCar : trafficCars) {
+		if (collision.checkCollisionAABB(player.car, trafficCar)) {
+			CollisionResult obbCollision = collision.checkCollision(player.car, trafficCar);
+			
+			if (obbCollision.isColliding) {
+				return false;
+			}
+		}
+	}
+
 	//std::cout << "noOfModels: " << model_city.numObjects << std::endl;
 	for (int i = 0; i < model_city.numObjects; ++i) {
 
@@ -240,6 +296,16 @@ void City::checkCollisionBoundaries() {
 
 void City::checkCollisionObstacles() {
 	// Iterate through objects in the Model_3DS
+
+	for (auto& trafficCar : trafficCars) {
+		if (collision.checkCollisionAABB(player.car, trafficCar)) {
+			CollisionResult obbCollision = collision.checkCollision(player.car, trafficCar);
+			player.setCollisionNormal(obbCollision.collisionNormal);
+			// Handle collision
+			playCollisionSound();
+		}
+	}
+
 	for (int i = 0; i < model_city.numObjects; ++i) {
 		// Check if the bounding box exists
 		if (!model_city.Objects[i].boundingBox) {
@@ -324,6 +390,9 @@ void City::myKeyboard(unsigned char key, int x, int y) {
 		break;
 	case '3':
 		player.thirdPerson();
+		break;
+	case 'p':
+		std::cout << "Player Position: (" << player.getPosition().x << ", " << player.getPosition().y << ", " << player.getPosition().z << ")\n";
 		break;
 	case 27:
 		exit(0);

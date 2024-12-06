@@ -32,7 +32,7 @@ void Camera::setup(Vector3 position, float cameraYaw, Vector3 front) {
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(100, 1280.0 / 720.0, 0.1, 1000);
+    gluPerspective(100, 1280.0 / 720.0, 0.1, 2000);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
