@@ -14,13 +14,14 @@ void City::generateCash(int num) {
 		float x = xMin + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (xMax - xMin)));
 		float z = zMin + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (zMax - zMin)));
 
-		while (!canPlace(x,z))
-		{
-			float x = xMin + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (xMax - xMin)));
-			float z = zMin + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (zMax - zMin)));
-		}
 		GameObject g;
 		g.init(Vector3(x, 0, z), Vector3(1, 1, 1.2), Vector3(5, 5, 5), 0, "models/cash/cash.3DS");
+		while (!canPlace(g))
+		{
+			x = xMin + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (xMax - xMin)));
+			z = zMin + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (zMax - zMin)));
+			g.init(Vector3(x, 0, z), Vector3(1, 1, 1.2), Vector3(5, 5, 5), 0, "models/cash/cash.3DS");
+		}
 		cashBlocks.emplace_back(g);    // Store position
 	}
 }
@@ -52,7 +53,7 @@ void City::display() {
 void City::init() {
 	player.init(Vector3(-1, 0.1, 1.5), Vector3(1, 1, 2.3), Vector3(0.2, 0.2, 0.2), 180, "models/city_taxi/Taxi.3ds");
 	Camera::instance = &player.camera;
-	generateCash(50);
+
 	engine1 = createIrrKlangDevice();
 	if (!engine1) {
 		std::cerr << "Sound engine could not start." << std::endl;
@@ -63,35 +64,40 @@ void City::LoadAssets()
 {
 	// Loading Model files
 	model_city.Load("models/city/city.3ds");
+
+
 	model_city.CalculateBoundingBox();
+
+
+	generateCash(100);
+
 	//model_taxi.Load("models/city_taxi/Taxi.3ds");
 }
 
 
-bool City::canPlace(float x, float z) {
+bool City::canPlace(GameObject g) {
 	//numOnjects 0,when loaded first, gives nptr
-	std::cout << "Testing placement at (" << x << ", " << z << "numObjects: " << model_city.numObjects << ")\n";
-
+	//std::cout << "Testing placement at (" << x << ", " << z << "numObjects: " << model_city.numObjects << ")\n";
+	std::cout << "noOfModels: " << model_city.numObjects << std::endl;
 	for (int i = 0; i < model_city.numObjects; ++i) {
-		const float threshold = 10;  // Adjust based on actual object sizes
 
-		float obstacleXMin = model_city.Objects[i].boundingBox->getMin().x;
-		float obstacleXMax = model_city.Objects[i].boundingBox->getMax().x;
-		float obstacleZMin = model_city.Objects[i].boundingBox->getMin().z;
-		float obstacleZMax = model_city.Objects[i].boundingBox->getMax().z;
+		// Check if the bounding box exists
+		if (!model_city.Objects[i].boundingBox) {
+			continue;
+		}
 
-		std::cout << "Obstacle " << i
-			<< ": Min(" << obstacleXMin << ", " << obstacleZMin
-			<< "), Max(" << obstacleXMax << ", " << obstacleZMax << ")\n";
-
+		GameObject& cityObject = *model_city.Objects[i].boundingBox;	
+		std::string objectName(model_city.Objects[i].name);
 		// Check collision
-		if (x >= obstacleXMin - threshold && x <= obstacleXMax + threshold &&
-			z >= obstacleZMin - threshold && z <= obstacleZMax + threshold) {
-			std::cout << "Cannot place cash block at (" << x << ", " << z << ") due to collision with obstacle " << i << ".\n";
-			return false;
+		if (collision.checkCollisionAABB(g, cityObject) && i != 366 && objectName.find("LM_Basketball") == std::string::npos) {
+
+			CollisionResult obbCollision = collision.checkCollision(g, cityObject);
+			if (obbCollision.isColliding) {
+				return false;
+			}
 		}
 	}
-	std::cout << "Placement successful at (" << x << ", " << z << ").\n";
+	std::cout << "Placement successful.\n";
 	return true;
 }
 

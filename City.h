@@ -38,7 +38,7 @@ public:
 	void drawGeneratedCashBlocks();
 	void display();
 	void update(float deltaTime);
-	bool canPlace(float x, float z);
+	bool canPlace(GameObject g);
 	void playCollectibleSound();
 	void checkCollisionCollectables();
 	void checkCollisionObstacles();
