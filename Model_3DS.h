@@ -1,5 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 //
+//
 // 3D Studio Model Class
 // by: Matthew Fairfax
 //
@@ -75,19 +76,25 @@
 // Would have greatly bloated the model class's code
 // Just replace this with your favorite texture class
 #include "GLTexture.h"
-
 #include <stdio.h>
+#include "Vector3.h"
+
+class GameObject;
+
+#include <cmath>
+#define _USE_MATH_DEFINES
 
 class Model_3DS  
 {
 public:
-	// A VERY simple vector struct
-	// I could have included a complex class but I wanted the model class to stand alone
-	struct Vector {
-		float x;
-		float y;
-		float z;
-	};
+
+	//// A VERY simple vector struct
+	//// I could have included a complex class but I wanted the model class to stand alone
+	//struct Vector {
+	//	float x;
+	//	float y;
+	//	float z;
+	//};
 
 	// Vertex struct to make code easier to read in places
 	struct Vertex {
@@ -116,7 +123,7 @@ public:
 	// Every chunk in the 3ds file starts with this struct
 	struct ChunkHeader {
 		unsigned short id;	// The chunk's id
-		unsigned long  len;	// The lenght of the chunk
+		unsigned long  len;	// The length of the chunk
 	};
 
 	// I sort the mesh by material so that I won't have to switch textures a great deal
@@ -134,14 +141,21 @@ public:
 		float *TexCoords;			// The array of texture coordinates for the vertices
 		unsigned short *Faces;		// The array of face indices
 		int numFaces;				// The number of faces
-		int numMatFaces;			// The number of differnet material faces
+		int numMatFaces;			// The number of different material faces
 		int numVerts;				// The number of vertices
 		int numTexCoords;			// The number of vertices
 		bool textured;				// True: the object has textures
 		MaterialFaces *MatFaces;	// The faces are divided by materials
-		Vector pos;					// The position to move the object to
-		Vector rot;					// The angles to rotate the object
+		Vector3 pos;					// The position to move the object to
+		Vector3 rot;					// The angles to rotate the object
+		GameObject* boundingBox;		// Add bounding box data
+		Object()
+			: Vertexes(nullptr), Normals(nullptr), TexCoords(nullptr), Faces(nullptr),
+			numFaces(0), numMatFaces(0), numVerts(0), numTexCoords(0),
+			textured(false), MatFaces(nullptr), boundingBox(nullptr) {
+		}
 	};
+
 
 	char *modelname;		// The name of the model
 	char *path;				// The path of the model
@@ -152,8 +166,8 @@ public:
 	bool shownormals;		// True: show the normals
 	Material *Materials;	// The array of materials
 	Object *Objects;		// The array of objects in the model
-	Vector pos;				// The position to move the model to
-	Vector rot;				// The angles to rotate the model
+	Vector3 pos;				// The position to move the model to
+	Vector3 rot;				// The angles to rotate the model
 	float scale;			// The size you want the model scaled to
 	bool lit;				// True: the model is lit
 	bool visible;			// True: the model gets rendered
@@ -162,6 +176,7 @@ public:
 	FILE *bin3ds;			// The binary 3ds file
 	Model_3DS();			// Constructor
 	virtual ~Model_3DS();	// Destructor
+	void CalculateBoundingBox();
 
 private:
 	void IntColorChunkProcessor(long length, long findex, int matindex);
@@ -188,7 +203,7 @@ private:
 				void TriangularMeshChunkProcessor(long length, long findex, int objindex);
 					// Processes the vertices of the model and loads them
 					void VertexListChunkProcessor(long length, long findex, int objindex);
-					// Processes the texture cordiantes of the vertices and loads them
+					// Processes the texture coordinates of the vertices and loads them
 					void TexCoordsChunkProcessor(long length, long findex, int objindex);
 					// Processes the faces of the model and loads the faces
 					void FacesDescriptionChunkProcessor(long length, long findex, int objindex);
@@ -199,5 +214,5 @@ private:
 	// the normals of the faces that use that vertex
 	void CalculateNormals();
 };
-
+	
 #endif MODEL_3DS_H

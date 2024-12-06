@@ -27,8 +27,7 @@ public:
 		extraScaling = Vector3(1, 1, 1);
 		model = Model_3DS();
 		front = Vector3(0, 0, 1);
-		right = Vector3(1, 0, 0);
-		angle = 0;
+		right = Vector3(1, 0, 0);		angle = 0;
 		pitch = 0;
 		color = Vector3(0, 0, 0);
 		maxSide = size.x > size.z ? size.x : size.z;
@@ -44,14 +43,15 @@ public:
 	//	maxSide = size.x > size.z ? size.x : size.z;
 	//}
 	Vector3 getMin() {
-		return position - Vector3(maxSide, maxSide, maxSide) * 0.5;
+		return position - Vector3(maxSide, size.y, maxSide) * 0.5;
 	}
 	Vector3 getMax() {
-		return position + Vector3(maxSide, maxSide, maxSide) * 0.5;
+		return position + Vector3(maxSide, size.y, maxSide) * 0.5;
 	}
 	std::vector<Vector3> getVertices();
 
 	void renderBoundingBox();
+	void renderNormals();
 protected:
 	void rotate(float rad);
 };

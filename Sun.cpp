@@ -6,7 +6,7 @@ Sun::Sun(float initialAngle, float speed) : angle(initialAngle), cycleSpeed(spee
     diffuseColor[0] = 1.0f; diffuseColor[1] = 1.0f; diffuseColor[2] = 1.0f; diffuseColor[3] = 1.0f;
     specularColor[0] = 1.0f; specularColor[1] = 1.0f; specularColor[2] = 1.0f; specularColor[3] = 1.0f;
 
-    position = Vector3(0.0f, 10.0f, 0.0f);
+    position = Vector3(0.0f, ORBIT_RADIUS, 0.0f);
 }
 
 // Update the sun's position and light properties
@@ -19,8 +19,8 @@ void Sun::update(float deltaTime) {
 
     // Compute the sun's position in the sky (circular path)
     float radians = angle * 3.14159f / 180.0f;
-    position.x = 10.0f * cos(radians);  // Circular x-component
-    position.y = 10.0f * sin(radians);  // Circular y-component
+    position.x = ORBIT_RADIUS * cos(radians);  // Circular x-component
+    position.y = ORBIT_RADIUS * sin(radians);  // Circular y-component
 
     // Update light properties based on the angle
     updateLightProperties();
@@ -57,4 +57,12 @@ void Sun::applyLight() {
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseColor);
     glLightfv(GL_LIGHT0, GL_SPECULAR, specularColor);
+
+	glColor3f(1, 1, 0); // Yellow sun
+    glPushMatrix();
+	glTranslatef(position.x, position.y, position.z);
+	glutSolidSphere(10, 20, 20);
+	glPopMatrix();
+	glColor3f(1, 1, 1); // Reset color
+
 }

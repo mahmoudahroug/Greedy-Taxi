@@ -79,9 +79,10 @@
 //#include "stdafx.h"
 #include <string>
 #include "Model_3DS.h"
-
+#include "GameObject.h"
 #include <math.h>			// Header file for the math library
 #include <gl\gl.h>			// Header file for the OpenGL32 library
+#include <string.h>
 
 // The chunk's id numbers
 #define MAIN3DS				0x4D4D
@@ -274,6 +275,65 @@ void Model_3DS::Load(char *name)
 	}
 }
 
+void Model_3DS::CalculateBoundingBox() {
+	if (numObjects <= 0 || Objects == nullptr) {
+		return;
+	}
+
+	for (int objIndex = 0; objIndex < numObjects; ++objIndex) {
+		Object& currentObj = Objects[objIndex];
+
+
+		if (currentObj.Vertexes == nullptr || currentObj.numVerts <= 0) {
+			continue;
+		}
+		const char exclude[] = "polySurface750";
+		int lenEx = 14;
+		bool ignore = true;
+		for (int i = 0; i < lenEx; i++) {
+			if (currentObj.name[i] != exclude[i]) {
+				ignore = false;
+				break;
+			}
+		}
+		if (ignore) {
+			continue;
+		}
+
+
+
+		Vector3 min = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };
+		Vector3 max = { currentObj.Vertexes[0], currentObj.Vertexes[1], currentObj.Vertexes[2] };
+
+		for (int v = 0; v < currentObj.numVerts * 3; v += 3) {
+			min.x = std::fmin(min.x, currentObj.Vertexes[v]);
+			min.y = std::fmin(min.y, currentObj.Vertexes[v + 1]);
+			min.z = std::fmin(min.z, currentObj.Vertexes[v + 2]);
+
+			max.x = std::fmax(max.x, currentObj.Vertexes[v]);
+			max.y = std::fmax(max.y, currentObj.Vertexes[v + 1]);
+			max.z = std::fmax(max.z, currentObj.Vertexes[v + 2]);
+		}
+
+		if (currentObj.boundingBox == nullptr) {
+			currentObj.boundingBox = new GameObject();
+		}
+
+		float width = max.x - min.x;
+		float height = max.y - min.y;
+		float depth = max.z - min.z;
+
+		currentObj.boundingBox->position = Vector3(
+			(min.x + max.x) * 0.5f,
+			(min.y + max.y) * 0.5f,
+			(min.z + max.z) * 0.5f
+		);
+
+		currentObj.boundingBox->size = Vector3(width, height, depth);
+		currentObj.boundingBox->maxSide = std::fmax(width, std::fmax(height, depth));
+	}
+}
+
 void Model_3DS::Draw()
 {
 	if (visible)
@@ -370,7 +430,7 @@ void Model_3DS::CalculateNormals()
 		{
 			// Reduce each vert's normal to unit
 			float length;
-			Vector unit;
+			Vector3 unit;
 
 			unit.x = Objects[i].Normals[g*3];
 			unit.y = Objects[i].Normals[g*3+1];
@@ -983,7 +1043,7 @@ void Model_3DS::FacesDescriptionChunkProcessor(long length, long findex, int obj
 		Objects[objindex].Faces[i+2] = vertC;
 
 		// Calculate the face's normal
-		Vector n;
+		Vector3 n;
 		Vertex v1;
 		Vertex v2;
 		Vertex v3;

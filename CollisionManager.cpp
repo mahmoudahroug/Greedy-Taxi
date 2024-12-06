@@ -77,12 +77,22 @@ CollisionResult CollisionManager::checkCollision(GameObject& o1, GameObject& o2)
 		if (max1 < min2 || max2 < min1)
 			return { false, Vector3() };
 
-		float overlap = max1 < max2? max1 : max2 - min1 > min2? min1 : min2;
+		float overlap = max1 < max2 ? max1 - min2 : max2 - min1;
 		if (overlap < smallestOverlap) {
 			smallestOverlap = overlap;
 			collisionNormal = normal;
 		}
 	}
+	Vector3 direction = o1.position - o2.position;
+	float dot = direction.dot(collisionNormal);
+	if (dot < 0) {
+		collisionNormal = -collisionNormal;
+	}
+
 
 	return { true, collisionNormal };
+}
+CollisionResult checkCollision(GameObject& car, Model_3DS& model) {
+	
+	return { false, Vector3() };
 }

@@ -1,7 +1,7 @@
 #pragma once
-#define ACCELERATION 10
+#define ACCELERATION 5
 #define BRAKE_FORCE 10
-#define ANGULAR_SPEED 1
+#define ANGULAR_SPEED 5
 #include <iostream>
 #include "Vector3.h"
 #include "DynamicObject.h"
@@ -31,7 +31,7 @@ public:
 	//	size = Vector3(2, 2, 5);
 	//}
 	Car():angularSpeed(0){
-		maxSpeed = 100;
+		maxSpeed = 50;
 		collisionNormal = Vector3(0, 0, 0);
 		headlightOffsetLeft = Vector3(-0.5f, 0.0f, 1.0f);
 		headlightOffsetRight = Vector3(0.5f, 0.0f, 1.0f);
