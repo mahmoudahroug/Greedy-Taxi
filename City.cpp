@@ -176,7 +176,6 @@ void City::displayGameEndScreen() {
 		glColor3f(1.0f, 0.0f, 0.0f);
 		std::string loseText = "GAME LOSE! You Fail to Advance to Next Level :(";
 		glRasterPos2i(width / 2 -150, height / 2); // Adjust position for the text (top-center)
-		playLostSound();
 		// Render each character of the text
 		for (char c : loseText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
@@ -381,6 +380,8 @@ void City::update(float deltaTime) {
 	}
 	if (gameTimer == 0 && collectedCash < 10) {
 		gameLost = true;
+		playLostSound();
+		gameTimer--;
 	}
 	player.update(deltaTime);
 
