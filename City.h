@@ -25,6 +25,7 @@ public:
 	ISoundEngine* engine1 = nullptr;
 	int collectedCash = 0;
 	GameObject cash;
+	std::vector<GameObject> trafficCars;
 	bool gameWon = false;
 	bool gameLost = false;
 	std::vector<GameObject> cashBlocks;
@@ -50,6 +51,8 @@ public:
 	void checkCollisionObstacles();
 	void checkCollisionBoundaries();
 	bool checkGameWin();
+	void generateTraffic();
+	void drawGeneratedTraffic();
 	void playCollisionSound();
 	void myKeyboard(unsigned char key, int x, int y);
 	void myMotion(int x, int y);
