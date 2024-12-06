@@ -227,7 +227,7 @@ void update()
 	if (city.checkGameWin() && level == 1) {
 		//level = 2;
 		//	//unload level 1 assets
-		glutTimerFunc(500, switchLevel, 1);
+		glutTimerFunc(3000, switchLevel, 1);
 	}
 
 	glutPostRedisplay();
