@@ -85,13 +85,13 @@ void Desert::drawGeneratedObstacles() {
 	for (auto& o : obstacles) {
 		
 		glPushMatrix();
-		glTranslatef(o.position.x, o.position.y + o.size.y / 2, o.position.z+0.7);
+		glTranslatef(o.position.x, o.position.y + o.size.y / 2, o.position.z);
 		glScalef(o.size.x, o.size.y, o.size.z);
 		glutWireCube(1);
 		glPopMatrix();
 
 		glPushMatrix();
-		glTranslatef(o.position.x, o.position.y, o.position.z);
+		glTranslatef(o.position.x, o.position.y, o.position.z-0.7);
 		glRotatef(o.angle, 1, 0, 0);
 		glScalef(o.extraScaling.x, o.extraScaling.y, o.extraScaling.z);
 		glColor3f(0.4f, 0.5f, 0.1f);
@@ -106,7 +106,8 @@ void Desert::checkCollision() {
 		if (collision.checkCollisionAABB(player.car, *it)) {
 			if (!(gameWon||gameLost))
 				playCollectibleSound();
-			refuel(20.0f);
+			if(!gameLost)
+				refuel(20.0f);
 			it = gasTanks.erase(it); // Remove collided gas tank and update iterator
 		}
 		else {
