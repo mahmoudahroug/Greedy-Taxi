@@ -8,7 +8,8 @@
 class Camera {
 public:
     static Camera* instance;
-
+    enum ViewMode { FirstPerson, ThirdPerson };
+    ViewMode currentView;
 private:
     Vector3 eye;      // Camera position
     Vector3 center;  // Look-at point
@@ -28,6 +29,7 @@ public:
     void handleMouseButton(int button, int state, int x, int y);
 	void carFirstPerson();
     void carThirdPerson();
+    void toggleViewMode();
 };
 
 
