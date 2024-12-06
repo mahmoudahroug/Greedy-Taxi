@@ -129,7 +129,7 @@ void Desert::checkCollisionTreasure() {
 
 void Desert::checkCollisionObstacles() {
 	for (auto it = obstacles.begin(); it != obstacles.end(); ) {
-		if (collision.checkCollisionAABB(player.car, *it)&& collision.checkCollisionOBB(player.car, *it)) {
+		if (collision.checkCollisionAABB(player.car, *it) && collision.checkCollisionOBB(player.car, *it)) {
 			if (!(gameWon || gameLost))
 				playCollisionSound();
 			fuel = fuel - 10;
@@ -445,6 +445,8 @@ void Desert::LoadAssets()
 	loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
 }
 void Desert::update(float deltaTime) {
+	if (gameWon || gameLost)
+		return;
 	checkCollision();
 	checkCollisionBoundaries(deltaTime);
 	checkCollisionObstacles();  // Check for collisions in every frame
