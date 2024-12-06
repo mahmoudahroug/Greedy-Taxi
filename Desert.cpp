@@ -42,7 +42,7 @@ void Desert::init() {
 
 	
 
-	Camera::instance = &player.camera;
+	Camera::instance1 = &player.camera;
 	engine1 = createIrrKlangDevice();
 	if (!engine1) {
 		std::cerr << "Sound engine could not start." << std::endl;
@@ -448,8 +448,6 @@ void Desert::LoadAssets()
 	loadBMP(&tex, "Textures/blu-sky-3.bmp", true);
 }
 void Desert::update(float deltaTime) {
-	if (gameWon || gameLost)
-		return;
 	checkCollision();
 	checkCollisionBoundaries(deltaTime);
 	checkCollisionObstacles();  // Check for collisions in every frame
@@ -508,9 +506,6 @@ void Desert::myMotion(int x, int y) {
 }
 void Desert::myMouse(int button, int state, int x, int y) {
 	player.handleMouseButton(button, state, x, y);
-	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
-		player.toggleViewMode();
-	}
 }
 void Desert::myReshape(int w, int h) {
 	player.camera.setup(player.car.position, player.car.angle, player.car.front);

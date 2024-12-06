@@ -113,7 +113,7 @@ void City::LoadAssets()
 bool City::canPlace(GameObject g) {
 	//numOnjects 0,when loaded first, gives nptr
 	//std::cout << "Testing placement at (" << x << ", " << z << "numObjects: " << model_city.numObjects << ")\n";
-	std::cout << "noOfModels: " << model_city.numObjects << std::endl;
+	//std::cout << "noOfModels: " << model_city.numObjects << std::endl;
 	for (int i = 0; i < model_city.numObjects; ++i) {
 
 		// Check if the bounding box exists
@@ -132,7 +132,7 @@ bool City::canPlace(GameObject g) {
 			}
 		}
 	}
-	std::cout << "Placement successful.\n";
+	//std::cout << "Placement successful.\n";
 	return true;
 }
 
@@ -259,21 +259,21 @@ void City::checkCollisionObstacles() {
 				continue;
 			}
 			// Print details of the game object only when a collision occurs
-			std::cout << "Collision detected with object: " << model_city.Objects[i].name << '\n';
-			std::cout << "Object Bounding Box:\n";
-			std::cout << " Position: (" << cityObject.position.x << ", "
-				<< cityObject.position.y << ", " << cityObject.position.z << ")\n";
-			std::cout << " Size: (" << cityObject.size.x << ", "
-				<< cityObject.size.y << ", " << cityObject.size.z << ")\n";
+			//std::cout << "Collision detected with object: " << model_city.Objects[i].name << '\n';
+			//std::cout << "Object Bounding Box:\n";
+			//std::cout << " Position: (" << cityObject.position.x << ", "
+			//	<< cityObject.position.y << ", " << cityObject.position.z << ")\n";
+			//std::cout << " Size: (" << cityObject.size.x << ", "
+			//	<< cityObject.size.y << ", " << cityObject.size.z << ")\n";
 
-			// Log player car information
-			std::cout << "Player Car Bounding Box:\n";
-			std::cout << " Position: (" << player.car.position.x << ", "
-				<< player.car.position.y << ", " << player.car.position.z << ")\n";
-			std::cout << " Size: (" << player.car.size.x << ", "
-				<< player.car.size.y << ", " << player.car.size.z << ")\n";
-			std::cout << " Collision Normal: (" << obbCollision.collisionNormal.x << ", "
-				<< obbCollision.collisionNormal.y << ", " << obbCollision.collisionNormal.z << ")\n";
+			//// Log player car information
+			//std::cout << "Player Car Bounding Box:\n";
+			//std::cout << " Position: (" << player.car.position.x << ", "
+			//	<< player.car.position.y << ", " << player.car.position.z << ")\n";
+			//std::cout << " Size: (" << player.car.size.x << ", "
+			//	<< player.car.size.y << ", " << player.car.size.z << ")\n";
+			//std::cout << " Collision Normal: (" << obbCollision.collisionNormal.x << ", "
+			//	<< obbCollision.collisionNormal.y << ", " << obbCollision.collisionNormal.z << ")\n";
 
 			player.setCollisionNormal(obbCollision.collisionNormal);
 			// Handle collision
@@ -337,9 +337,6 @@ void City::myMotion(int x, int y) {
 }
 void City::myMouse(int button, int state, int x, int y) {
 	player.handleMouseButton(button, state, x, y);
-	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
-		player.toggleViewMode();
-	}
 }
 void City::myReshape(int w, int h) {
 	player.camera.setup(player.car.position, player.car.angle, player.car.front);

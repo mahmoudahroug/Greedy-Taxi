@@ -91,7 +91,10 @@ void myInit()
 	InitMaterial();
 	city.init();
 	desert.init();
-
+	//if (level == 1)
+	//	city.init();
+	//else
+	//	desert.init();
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -209,6 +212,7 @@ void LoadAssets()
 void switchLevel(int value) {
 	level = 2;
 
+
 }
 void update()
 {
@@ -294,3 +298,4 @@ void main(int argc, char** argv)
 
 	glutMainLoop();
 }
+
