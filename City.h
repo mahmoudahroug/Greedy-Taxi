@@ -18,6 +18,9 @@ using namespace irrklang;
 
 class City
 {
+private:
+	float gameTimer = 60.0f;  // Start at 60 seconds
+	float lastSecondTime = 0.0f;  // Track last time a second passed
 public:
 	ISoundEngine* engine1 = nullptr;
 	int collectedCash = 0;
@@ -45,6 +48,7 @@ public:
 	void checkCollisionCollectables();
 	void checkCollisionObstacles();
 	void checkCollisionBoundaries();
+	bool checkGameWin();
 	void playCollisionSound();
 	void myKeyboard(unsigned char key, int x, int y);
 	void myMotion(int x, int y);

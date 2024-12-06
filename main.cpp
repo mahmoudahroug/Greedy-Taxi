@@ -254,6 +254,12 @@ void update()
 	else
 		desert.update(deltaTime);
 
+	//if (city.checkGameWin() && level==1) {
+	//	level = 2;
+	//	//unload level 1 assets
+	//	myInit();
+	}
+
 	glutPostRedisplay();
 }
 void keyboardUp(unsigned char key, int x, int y) {

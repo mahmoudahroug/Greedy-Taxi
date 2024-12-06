@@ -52,6 +52,7 @@ void City::display() {
 			}
 		}
 
+
 		// Display Game Score
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -66,6 +67,15 @@ void City::display() {
 		for (char c : scoreText) {
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
 		}
+
+		glColor3f(1.0f, 0.0f, 0.0f);
+		int timerInt = static_cast<int>(std::ceil(gameTimer));
+		std::string timerText = "Time: " + std::to_string(timerInt);
+		glRasterPos2i(10, 50);
+		for (char c : timerText) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		}
+
 		glPopMatrix();
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
@@ -165,7 +175,7 @@ void City::displayGameEndScreen() {
 	else if (gameLost) {
 		glColor3f(1.0f, 0.0f, 0.0f);
 		std::string loseText = "GAME LOSE! You Fail to Advance to Next Level :(";
-		glRasterPos2i(width / 2, height / 2); // Adjust position for the text (top-center)
+		glRasterPos2i(width / 2 -150, height / 2); // Adjust position for the text (top-center)
 		playLostSound();
 		// Render each character of the text
 		for (char c : loseText) {
@@ -341,15 +351,31 @@ void City::playLostSound() {
 	if (engine1) engine1->play2D("sounds/lost.mp3", false);
 }
 
+bool City::checkGameWin() {
+	return gameWon;
+}
 void City::update(float deltaTime) {
+
+	lastSecondTime += deltaTime;
+
+	// Decrement timer every second
+	if (lastSecondTime >= 1.0f) {
+		gameTimer--;  // Reduce by 1 second
+		lastSecondTime = 0.0f;  // Reset second tracker
+	}
+
+	// Ensure timer doesn't go below zero
+	if (gameTimer < 0) {
+		gameTimer = 0;
+	}
+
 	checkCollisionObstacles();
 	checkCollisionCollectables();
 	checkCollisionBoundaries();
 	if (collectedCash == 10) {
 		gameWon = true;
 	}
-	if (time == 0 && collectedCash<10)
-	{
+	if (gameTimer == 0 && collectedCash < 10) {
 		gameLost = true;
 	}
 	player.update(deltaTime);
