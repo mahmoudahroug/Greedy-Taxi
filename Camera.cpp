@@ -1,5 +1,6 @@
 #include "Camera.h"
 Camera* Camera::instance = nullptr; 
+Camera* Camera::instance1 = nullptr; 
 Camera::Camera()
     : eye(10, 5, 10),
     center(0,3.0,0),
@@ -35,7 +36,9 @@ void Camera::setup(Vector3 position, float cameraYaw, Vector3 front) {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    //std::cout << "PitchBefore: " << cameraPitch << "\n";
     updateEyePosition(position, cameraYaw, front);
+    //std::cout << "PitchAfter: " << cameraPitch << "\n";
 }
 
 void Camera::handleMouseMotion(int x, int y) {
@@ -47,7 +50,7 @@ void Camera::handleMouseMotion(int x, int y) {
 
     if (cameraPitch > 1.5) cameraPitch = 1.5; // Prevent flipping
     if (cameraPitch < -1.5) cameraPitch = -1.5;
-
+    std::cout << "Pitchinside: " << cameraPitch << "\n";
     lastMouseX = x;
     lastMouseY = y;
     glutPostRedisplay();  // Redraw the scene with the updated camera
@@ -57,8 +60,9 @@ void Camera::handleMouseButton(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         lastMouseX = x;
         lastMouseY = y;
+        
 		//this->handleMouseMotion(x, y);
-        glutMotionFunc([](int x, int y) { instance->handleMouseMotion(x, y); });
+        glutMotionFunc([](int x, int y) { instance->handleMouseMotion(x, y); instance1->handleMouseMotion(x, y); });
     }
     else  if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
         toggleViewMode();

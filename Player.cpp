@@ -66,13 +66,3 @@ void Player::setCollisionNormal(Vector3 normal)
 	car.setCollisionNormal(normal);
 }
 
-void Player::toggleViewMode() {
-	if (currentView == FirstPerson) {
-		thirdPerson();
-		currentView = ThirdPerson;
-	}
-	else {
-		firstPerson();
-		currentView = FirstPerson;
-	}
-}

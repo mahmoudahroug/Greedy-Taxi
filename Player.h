@@ -6,8 +6,7 @@ class Player
 public:
 	Car car;
 	Camera camera;
-	enum ViewMode { FirstPerson, ThirdPerson };
-	ViewMode currentView;
+	
 	void init(Vector3 pos, Vector3 s, Vector3 extraS, int angle, char* m);
 	void display();
 	Vector3 getPosition() { return car.position; };
@@ -25,7 +24,5 @@ public:
 	void thirdPerson();
 	void handleMouseButton(int button, int state, int x, int y);
 	void handleMouseMotion(int x, int y);
-	void toggleViewMode();
-	Player() : currentView(ThirdPerson) {}
 };
 

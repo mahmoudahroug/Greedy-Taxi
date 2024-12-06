@@ -3,11 +3,13 @@
 #include <cmath>
 #include "Vector3.h"
 #include <glut.h>
+#include <iostream>
 
 
 class Camera {
 public:
     static Camera* instance;
+    static Camera* instance1;
     enum ViewMode { FirstPerson, ThirdPerson };
     ViewMode currentView;
 private:
