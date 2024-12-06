@@ -19,10 +19,9 @@ using namespace irrklang;
 class City
 {
 public:
-	std::vector<GameObject> obstacles;
 	ISoundEngine* engine1 = nullptr;
+	int collectedCash = 0;
 	GameObject cash;
-	bool isCollected = false;
 	bool gameWon = false;
 	bool gameLost = false;
 	std::vector<GameObject> cashBlocks;
@@ -39,6 +38,9 @@ public:
 	void display();
 	void update(float deltaTime);
 	bool canPlace(GameObject g);
+	void displayGameEndScreen();
+	void playWonSound();
+	void playLostSound();
 	void playCollectibleSound();
 	void checkCollisionCollectables();
 	void checkCollisionObstacles();

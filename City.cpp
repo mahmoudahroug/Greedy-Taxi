@@ -33,18 +33,43 @@ void City::drawGeneratedCashBlocks() {
 }
 
 void City::display() {
-	player.display();
-	glPushMatrix();
-	//glScaled(0.4, 0.4, 0.4);
-	model_city.Draw();
-	drawGeneratedCashBlocks();
-	glPopMatrix();
-	//model_taxi.Draw();
-	for (int i = 0; i < model_city.numObjects; ++i) {
-		if (model_city.Objects[i].boundingBox) {
-			model_city.Objects[i].boundingBox->renderBoundingBox();
-			//model_city.Objects[i].boundingBox->renderNormals();
+	if (gameWon || gameLost) {
+		displayGameEndScreen();
+	}
+	else {
+		player.display();
+
+		glPushMatrix();
+		//glScaled(0.4, 0.4, 0.4);
+		model_city.Draw();
+		drawGeneratedCashBlocks();
+		glPopMatrix();
+		//model_taxi.Draw();
+		for (int i = 0; i < model_city.numObjects; ++i) {
+			if (model_city.Objects[i].boundingBox) {
+				model_city.Objects[i].boundingBox->renderBoundingBox();
+				//model_city.Objects[i].boundingBox->renderNormals();
+			}
 		}
+
+		// Display Game Score
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(0, 1280, 720, 0, -1, 1);
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glLoadIdentity();
+		glColor3f(0.0f, 1.0f, 0.0f);
+		std::string scoreText = "Score: " + std::to_string(collectedCash) + "/10";
+		glRasterPos2i(10, 20);
+		for (char c : scoreText) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		}
+		glPopMatrix();
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
 	}
 }
 
@@ -102,11 +127,67 @@ bool City::canPlace(GameObject g) {
 }
 
 
+void City::displayGameEndScreen() {
+	int width = 1280;
+	int height = 720;
+	// Set the background to black
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear color and depth buffers
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // Set background color to black
+
+	// Switch to orthographic projection for 2D rendering (text rendering)
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, width, 0, height, -1, 1);  // Set up 2D orthographic projection
+
+	glMatrixMode(GL_MODELVIEW);  // Switch back to the modelview matrix
+
+	// Reset the modelview matrix to avoid transformation issues
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Set the text color to white
+	glColor3f(1.0f, 0.0f, 0.0f);
+
+	// Display "GAME WIN!" if the player wins
+	if (gameWon) {
+
+		glColor3f(0, 1, 0);
+		std::string winText = "GAME WIN! You Advance to the Next Level";
+		glRasterPos2i(width / 2 - 150, height / 2);  // Adjust position for the text (top-center)
+		playWonSound();
+		// Render each character of the text
+		for (char c : winText) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
+		}
+	}
+	// Display "GAME LOSE!" if the player loses
+	else if (gameLost) {
+		glColor3f(1.0f, 0.0f, 0.0f);
+		std::string loseText = "GAME LOSE! You Fail to Advance to Next Level :(";
+		glRasterPos2i(width / 2, height / 2); // Adjust position for the text (top-center)
+		playLostSound();
+		// Render each character of the text
+		for (char c : loseText) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Render each character
+		}
+	}
+
+	// Pop the modelview matrix and projection matrix to restore the previous settings
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	// Ensure everything is rendered to the screen
+	glFlush();
+}
+
 void City::checkCollisionCollectables() {
 	for (auto it = cashBlocks.begin(); it != cashBlocks.end(); ) {
 		if (collision.checkCollisionAABB(player.car, *it) && collision.checkCollisionOBB(player.car, *it)) {
 			playCollectibleSound();
 			it = cashBlocks.erase(it); // Remove collided gas tank and update iterator
+			collectedCash++;
 		}
 		else {
 			++it; // Only increment if no collision to avoid skipping elements
@@ -145,20 +226,6 @@ void City::checkCollisionBoundaries() {
 		playCollisionSound();
 
 	}
-
-	
-
-	//// Apply smooth recoil to position using velocity
-	//if (player.car.velocity.z != 0) {
-	//	player.car.position.z += player.car.velocity.z * deltaTime;
-
-	//	// Stop recoil when back within boundaries
-	//	if ((player.car.velocity.z > 0 && player.car.position.z >= lowerBoundary + 5.0f) ||
-	//		(player.car.velocity.z < 0 && player.car.position.z <= upperBoundary - 5.0f)) {
-	//		player.car.velocity.z = 0;  // Stop recoil
-	//		//std::cout << "Car stopped recoil at z: " << player.car.position.z << "\n";
-	//	}
-	//}
 }
 
 void City::checkCollisionObstacles() {
@@ -266,10 +333,25 @@ void City::myReshape(int w, int h) {
 	player.camera.setup(player.car.position, player.car.angle, player.car.front);
 }
 
+void City::playWonSound() {
+	if (engine1) engine1->play2D("sounds/won.mp3", false);
+}
+
+void City::playLostSound() {
+	if (engine1) engine1->play2D("sounds/lost.mp3", false);
+}
+
 void City::update(float deltaTime) {
 	checkCollisionObstacles();
 	checkCollisionCollectables();
 	checkCollisionBoundaries();
+	if (collectedCash == 10) {
+		gameWon = true;
+	}
+	if (time == 0 && collectedCash<10)
+	{
+		gameLost = true;
+	}
 	player.update(deltaTime);
 
 	//std::cout << "pos: " << player.getPosition().x << ", " << player.getPosition().y << ", " << player.getPosition().z << "\n";
