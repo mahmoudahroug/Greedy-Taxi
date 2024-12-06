@@ -101,36 +101,6 @@ void myInit(void)
 }
 
 //=======================================================================
-// Render Ground Function
-//=======================================================================
-//void RenderGround()
-//{
-//	glDisable(GL_LIGHTING);	// Disable lighting 
-//
-//	glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
-//
-//	glBindTexture(GL_TEXTURE_2D, tex_ground.texture[0]);	// Bind the ground texture
-//
-//	glPushMatrix();
-//	glBegin(GL_QUADS);
-//	glNormal3f(0, 1, 0);	// Set quad normal direction.
-//	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-//	glVertex3f(-200, 0, -200);
-//	glTexCoord2f(5, 0);
-//	glVertex3f(200, 0, -200);
-//	glTexCoord2f(5, 5);
-//	glVertex3f(200, 0, 200);
-//	glTexCoord2f(0, 5);
-//	glVertex3f(-200, 0, 200);
-//	glEnd();
-//	glPopMatrix();
-//
-//	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
-//
-//	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
-//}
-
-//=======================================================================
 // Display Function
 //=======================================================================
 
@@ -150,7 +120,7 @@ void myDisplay(void)
 		desert.display();
 	//glPushMatrix();
 	//glScaled(0.1, 0.1, 0.1);
-	model_city.Draw();
+	//model_city.Draw();
 	//glPopMatrix();
 
 	glutSwapBuffers();
@@ -254,9 +224,8 @@ void update()
 	else
 		desert.update(deltaTime);
 
-	//if (city.checkGameWin() && level==1) {
-	//	level = 2;
-	//	//unload level 1 assets
+	if (city.checkGameWin() && level==1) level = 2;
+		//unload level 1 assets
 	//	myInit();
 
 	glutPostRedisplay();
