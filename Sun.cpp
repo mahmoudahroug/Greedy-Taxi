@@ -57,4 +57,12 @@ void Sun::applyLight() {
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseColor);
     glLightfv(GL_LIGHT0, GL_SPECULAR, specularColor);
+
+	glColor3f(1, 1, 0); // Yellow sun
+    glPushMatrix();
+	glTranslatef(position.x, position.y, position.z);
+	glutSolidSphere(1, 20, 20);
+	glPopMatrix();
+	glColor3f(1, 1, 1); // Reset color
+
 }

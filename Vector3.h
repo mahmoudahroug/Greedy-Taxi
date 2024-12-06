@@ -47,4 +47,7 @@ struct Vector3 {
 	bool operator!=(const Vector3& other) const {
 		return x != other.x || y != other.y || z != other.z;
 	}
+	float magnitude() const {
+		return sqrt(x * x + y * y + z * z);
+	}
 };

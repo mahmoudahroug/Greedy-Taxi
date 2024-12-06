@@ -34,10 +34,11 @@ void GameObject::render() {
 	////model.render();
 	//glPopMatrix();
 	renderBoundingBox();
+	renderNormals();
 	glPushMatrix();
 	glTranslatef(position.x, position.y, position.z);
-	glRotatef(angle, 0, 1, 0);
 	glScalef(extraScaling.x, extraScaling.y, extraScaling.z);
+	glRotatef(angle, 0, 1, 0);
 	//glScalef(0.02, 0.02, 0.02);
 	model.Draw();
 	glPopMatrix();
@@ -67,4 +68,39 @@ std::vector<Vector3> GameObject::getVertices() {
 	vertices.push_back(position - front * halfSize.z - right * halfSize.x + Vector3(0, halfSize.y, 0));
 
 	return vertices;
+}
+void GameObject::renderNormals() {
+	// Draw normals
+	glDisable(GL_TEXTURE_2D);
+	// Disbale lighting if the model is lit
+	glDisable(GL_LIGHTING);
+	// Draw the normals blue
+	glColor3f(0.0f, 0.0f, 1.0f);
+
+	glPushMatrix();
+	glTranslatef(position.x, position.y + 5, position.z);
+	int scale = 10;
+	glScalef(scale, scale, scale);
+	// Draw a line between the vertex and the end of the normal
+	glBegin(GL_LINES);
+	glVertex3f(0, 0, 0);
+	glVertex3f(front.x, front.y, front.z);
+	glEnd();
+	glPopMatrix();
+	glPushMatrix();
+
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glTranslatef(position.x, position.y + 5, position.z);
+	glScalef(scale, scale, scale);
+	// Draw a line between the vertex and the end of the normal
+	glBegin(GL_LINES);
+	glVertex3f(0, 0, 0);
+	glVertex3f(right.x, right.y, right.z);
+	glEnd();
+	glPopMatrix();
+	// Reset the color to white
+	glColor3f(1.0f, 1.0f, 1.0f);
+	// If the model is lit then renable lighting
+	glEnable(GL_LIGHTING);
+	
 }

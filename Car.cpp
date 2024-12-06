@@ -99,14 +99,16 @@ void Car::handleCollision() {
 		return;
 	}
 	Vector3 recoil = collisionNormal * velocity.dot(collisionNormal);
-	velocity = velocity - recoil * 1.1f + collisionNormal;
+	velocity = velocity - recoil * 1.2f + collisionNormal;
 	front = velocity.normalize();
 	right = front.cross(Vector3(0, 1, 0));
 	angle = atan2(front.x, front.z) * 180.0 / 3.141592f;
+	speed = velocity.magnitude();
+	stopAcceleration();
 	collisionNormal = Vector3(0, 0, 0);
 }
 void Car::setCollisionNormal(Vector3 normal) {
-	collisionNormal = normal;
+	collisionNormal = collisionNormal + normal;
 }
 void Car::updateHeadlights() {
 	// Calculate world positions for the headlights based on the car's position and orientation

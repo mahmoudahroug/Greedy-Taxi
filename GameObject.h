@@ -51,6 +51,7 @@ public:
 	std::vector<Vector3> getVertices();
 
 	void renderBoundingBox();
+	void renderNormals();
 protected:
 	void rotate(float rad);
 };

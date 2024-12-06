@@ -2,14 +2,15 @@
 
 void City::display() {
 	player.display();
-	glPushMatrix();
+	//glPushMatrix();
 	//glScaled(0.4, 0.4, 0.4);
 	model_city.Draw();
-	glPopMatrix();
+	//glPopMatrix();
 	//model_taxi.Draw();
 	for (int i = 0; i < model_city.numObjects; ++i) {
 		if (model_city.Objects[i].boundingBox) {
 			model_city.Objects[i].boundingBox->renderBoundingBox();
+			model_city.Objects[i].boundingBox->renderNormals();
 		}
 	}
 }
@@ -45,8 +46,8 @@ void City::checkCollisionObstacles() {
 
 		//bool aabbCollision = collision.checkCollisionAABB(player.car, cityObject);
 		//bool obbCollision = collision.checkCollisionOBB(player.car, cityObject);
-
-		if (collision.checkCollisionAABB(player.car, cityObject) && i!=366) {
+		std::string objectName(model_city.Objects[i].name);
+		if (collision.checkCollisionAABB(player.car, cityObject) && i!=366 && objectName.find("LM_Basketball") == std::string::npos) {
 
 			CollisionResult obbCollision = collision.checkCollision(player.car, cityObject);
 			if (!obbCollision.isColliding) {
@@ -66,7 +67,11 @@ void City::checkCollisionObstacles() {
 				<< player.car.position.y << ", " << player.car.position.z << ")\n";
 			std::cout << " Size: (" << player.car.size.x << ", "
 				<< player.car.size.y << ", " << player.car.size.z << ")\n";
+			std::cout << " Collision Normal: (" << obbCollision.collisionNormal.x << ", "
+				<< obbCollision.collisionNormal.y << ", " << obbCollision.collisionNormal.z << ")\n";
 
+			//if(obbCollision.collisionNormal == Vector3(0, 0, 1))
+			//	obbCollision.collisionNormal = Vector3(0, 0, -1);
 			player.setCollisionNormal(obbCollision.collisionNormal);
 			// Handle collision
 			playCollisionSound();

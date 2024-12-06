@@ -77,7 +77,7 @@ CollisionResult CollisionManager::checkCollision(GameObject& o1, GameObject& o2)
 		if (max1 < min2 || max2 < min1)
 			return { false, Vector3() };
 
-		float overlap = max1 < max2? max1 : max2 - min1 > min2? min1 : min2;
+		float overlap = max1 < max2 ? max1 - min2 : max2 - min1;
 		if (overlap < smallestOverlap) {
 			smallestOverlap = overlap;
 			collisionNormal = normal;
