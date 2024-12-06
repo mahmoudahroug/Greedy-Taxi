@@ -45,6 +45,7 @@ public:
 	void playWonSound();
 	void playLostSound();
 	void playCollectibleSound();
+	void playBoundariesSound();
 	void checkCollisionCollectables();
 	void checkCollisionObstacles();
 	void checkCollisionBoundaries();

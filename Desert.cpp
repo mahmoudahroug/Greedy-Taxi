@@ -148,10 +148,12 @@ void Desert::checkCollisionBoundaries(float deltaTime) {
 	// Check if player is beyond the lower boundary
 	if (player.getPosition().z < lowerBoundary) {
 		player.setCollisionNormal(Vector3(0, 0, 1));
+		playBoundariesSound();
 	}
 	// Check if player is beyond the upper boundary
 	else if (player.getPosition().z > upperBoundary) {
 		player.setCollisionNormal(Vector3(0, 0, -1));
+		playBoundariesSound();
 	}
 
 	//// Apply smooth recoil to position using velocity
@@ -500,6 +502,9 @@ void Desert::myMotion(int x, int y) {
 }
 void Desert::myMouse(int button, int state, int x, int y) {
 	player.handleMouseButton(button, state, x, y);
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+		player.toggleViewMode();
+	}
 }
 void Desert::myReshape(int w, int h) {
 	player.camera.setup(player.car.position, player.car.angle, player.car.front);
@@ -522,4 +527,7 @@ void Desert::playCollectibleSound() {
 	if (engine1) engine1->play2D("sounds/won.mp3", false);
 }void Desert::playLostSound() {
 	if (engine1) engine1->play2D("sounds/lost.mp3", false);
+}
+void Desert::playBoundariesSound() {
+	if (engine1) engine1->play2D("sounds/win2.wav", false);
 }

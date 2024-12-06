@@ -81,6 +81,6 @@ private:
 	void playTreasureSound();
 	void playWonSound();
 	void playLostSound();
-	
+	void playBoundariesSound();
 };
 

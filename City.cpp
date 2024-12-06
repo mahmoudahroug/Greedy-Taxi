@@ -214,25 +214,25 @@ void City::checkCollisionBoundaries() {
 	// Check if player is beyond the lower boundary
 	if (player.getPosition().z < zMin) {
 		player.setCollisionNormal(Vector3(0, 0, 1));
-		playCollisionSound();
+		playBoundariesSound();
 	}
 	// Check if player is beyond the upper boundary
 	if (player.getPosition().z > zMax) {
 		player.setCollisionNormal(Vector3(0, 0, -1));
-		playCollisionSound();
+		playBoundariesSound();
 
 	}
 
 	// Check if player is beyond the lower boundary
 	if (player.getPosition().x < xMin) {
 		player.setCollisionNormal(Vector3(1, 0, 0));
-		playCollisionSound();
+		playBoundariesSound();
 
 	}
 	// Check if player is beyond the upper boundary
 	if (player.getPosition().x > xMax) {
 		player.setCollisionNormal(Vector3(-1, 0, 0));
-		playCollisionSound();
+		playBoundariesSound();
 
 	}
 }
@@ -337,6 +337,9 @@ void City::myMotion(int x, int y) {
 }
 void City::myMouse(int button, int state, int x, int y) {
 	player.handleMouseButton(button, state, x, y);
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+		player.toggleViewMode();
+	}
 }
 void City::myReshape(int w, int h) {
 	player.camera.setup(player.car.position, player.car.angle, player.car.front);
@@ -349,7 +352,9 @@ void City::playWonSound() {
 void City::playLostSound() {
 	if (engine1) engine1->play2D("sounds/lost.mp3", false);
 }
-
+void City::playBoundariesSound() {
+	if (engine1) engine1->play2D("sounds/win2.wav", false);
+}
 bool City::checkGameWin() {
 	return gameWon;
 }
