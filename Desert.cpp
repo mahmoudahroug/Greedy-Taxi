@@ -522,7 +522,7 @@ void Desert::playCollectibleSound() {
 }void Desert::playWonSound() {
 	if (engine1) engine1->play2D("sounds/Scooter Song - Egypt  Uber.mp3", false);
 }void Desert::playLostSound() {
-	if (engine1) engine1->play2D("sounds/lost.mp3", false);
+	if (engine1) engine1->play2D("sounds/tkosa.mp3", false);
 }
 void Desert::playBoundariesSound() {
 	if (engine1) engine1->play2D("sounds/win2.wav", false);

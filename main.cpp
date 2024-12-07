@@ -140,6 +140,47 @@ void myKeyboard(unsigned char key, int x, int y)
 		desert.myKeyboard(key, x, y);
 
 	switch (key) {
+
+	case '6':
+		currentChannel = 0;
+		if (currentOnRadio) {
+			currentOnRadio->stop();
+			currentOnRadio->drop();
+		}
+		if (engine)
+			currentOnRadio = engine->play2D(channels[currentChannel].c_str(), false, false, true);
+
+		break;
+	case '7':
+		currentChannel = 1;
+
+		if (currentOnRadio) {
+			currentOnRadio->stop();
+			currentOnRadio->drop();
+		}
+		if (engine)
+			currentOnRadio = engine->play2D(channels[currentChannel].c_str(), false, false, true);
+		break;
+	case '8':
+		currentChannel = 2;
+
+		if (currentOnRadio) {
+			currentOnRadio->stop();
+			currentOnRadio->drop();
+		}
+		if (engine)
+			currentOnRadio = engine->play2D(channels[2].c_str(), false, false, true);
+		break;
+	case '9':
+		currentChannel = 3;
+
+		if (currentOnRadio) {
+			currentOnRadio->stop();
+			currentOnRadio->drop();
+		}
+		if (engine)
+			currentOnRadio = engine->play2D(channels[currentChannel].c_str(), false, false, true);
+		break;
 	case 'h':
 		playHornSound();
 		break;
@@ -152,6 +193,12 @@ void myKeyboard(unsigned char key, int x, int y)
 			currentOnRadio = engine->play2D( channels[currentChannel].c_str(), false, false, true);
 		currentChannel = (currentChannel + 1) % 4;
 		break;
+	case 's':
+		if (currentOnRadio) {
+			currentOnRadio->setIsPaused(!currentOnRadio->getIsPaused());
+		}
+		break;
+
 	}
 	glutPostRedisplay();
 }
@@ -237,7 +284,13 @@ void update()
 	else
 		desert.update(deltaTime);
 
-	
+	//if (city.checkGameLoss() && level == 1) {
+	//	if (currentOnRadio) {
+	//		currentOnRadio->stop();
+	//		currentOnRadio->drop();
+	//	}
+	//}
+
 	if (city.checkGameWin() && level == 1) {
 		//level = 2;
 		//	//unload level 1 assets

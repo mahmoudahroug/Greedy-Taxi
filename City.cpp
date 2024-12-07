@@ -424,13 +424,16 @@ void City::playWonSound() {
 }
 
 void City::playLostSound() {
-	if (engine1) engine1->play2D("sounds/lost.mp3", false);
+	if (engine1) engine1->play2D("sounds/tkosa.mp3", false);
 }
 void City::playBoundariesSound() {
 	if (engine1) engine1->play2D("sounds/win2.wav", false);
 }
 bool City::checkGameWin() {
 	return gameWon;
+}
+bool City::checkGameLoss() {
+	return gameLost;
 }
 void City::update(float deltaTime) {
 	if (gameWon || gameLost) {
