@@ -347,7 +347,7 @@ void City::checkCollisionObstacles() {
 
 			chaser.setCollisionNormal(obbCollision.collisionNormal);
 			// Handle collision
-			playCollisionSound();
+			//playCollisionSound();
 
 			//return; // Exit after handling the collision
 		}
