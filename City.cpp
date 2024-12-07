@@ -397,6 +397,10 @@ void City::myKeyboard(unsigned char key, int x, int y) {
 	case 'p':
 		std::cout << "Player Position: (" << player.getPosition().x << ", " << player.getPosition().y << ", " << player.getPosition().z << ")\n";
 		break;
+	case 'r':
+		player.car.position = Vector3(-1, 0.1, 1.5);
+		chaser.car.position = Vector3(-248.88, 0.1, -18);
+		break;
 	case 27:
 		exit(0);
 		break;

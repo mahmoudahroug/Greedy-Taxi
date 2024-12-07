@@ -143,7 +143,7 @@ void myKeyboard(unsigned char key, int x, int y)
 	case 'h':
 		playHornSound();
 		break;
-	case 'r': case 'R':
+	case 'f':
 		if (currentOnRadio) {
 			currentOnRadio->stop();
 			currentOnRadio->drop();
