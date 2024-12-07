@@ -18,7 +18,9 @@ int WIDTH = 1280;
 int HEIGHT = 720;
 
 int level = 1;
-
+int currentChannel = 0;
+ISound* currentOnRadio = nullptr;
+std::string channels[] = { "sounds/radio9090.mp3", "sounds/alagamb.mp3", "sounds/kora.mp3", "sounds/Samurai.mp3"};
 GLuint tex;
 char title[] = "Greedy Taxi";
 
@@ -140,7 +142,15 @@ void myKeyboard(unsigned char key, int x, int y)
 	switch (key) {
 	case 'h':
 		playHornSound();
-	default:
+		break;
+	case 'r': case 'R':
+		if (currentOnRadio) {
+			currentOnRadio->stop();
+			currentOnRadio->drop();
+		}
+		if (engine) 
+			currentOnRadio = engine->play2D( channels[currentChannel].c_str(), false, false, true);
+		currentChannel = (currentChannel + 1) % 4;
 		break;
 	}
 	glutPostRedisplay();
