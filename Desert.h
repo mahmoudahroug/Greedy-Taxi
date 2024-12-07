@@ -62,6 +62,8 @@ public:
 	void myMouse(int button, int state, int x, int y);
 	void myReshape(int w, int h);
 	void keyboardUp(unsigned char key, int x, int y);
+	bool checkGameLoss();
+	bool checkGameWin();
 private:
 	void generateGas(int num);
 	void generateObstacles(int num);

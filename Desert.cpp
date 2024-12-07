@@ -513,6 +513,12 @@ void Desert::keyboardUp(unsigned char key, int x, int y) {
 		player.stopTurning(); break;
 	}
 }
+bool Desert::checkGameWin() {
+	return gameWon;
+}
+bool Desert::checkGameLoss() {
+	return gameLost;
+}
 void Desert::playCollectibleSound() {
 	if (engine1) engine1->play2D("sounds/collectible.mp3", false);
 }void Desert::playCollisionSound() {

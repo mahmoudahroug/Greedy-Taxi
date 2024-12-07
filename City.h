@@ -20,7 +20,7 @@ using namespace irrklang;
 class City
 {
 private:
-	float gameTimer = 20.0f;  // Start at 60 seconds
+	float gameTimer = 60.0f;  // Start at 60 seconds
 	float lastSecondTime = 0.0f;  // Track last time a second passed
 public:
 	ISoundEngine* engine1 = nullptr;
