@@ -520,7 +520,7 @@ void Desert::playCollectibleSound() {
 }void Desert::playTreasureSound() {
 	if (engine1) engine1->play2D("sounds/treasure.mp3", false);
 }void Desert::playWonSound() {
-	if (engine1) engine1->play2D("sounds/won.mp3", false);
+	if (engine1) engine1->play2D("sounds/Scooter Song - Egypt  Uber.mp3", false);
 }void Desert::playLostSound() {
 	if (engine1) engine1->play2D("sounds/lost.mp3", false);
 }
